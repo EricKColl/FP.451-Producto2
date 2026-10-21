@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "datos:cargar": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --disable-warning=ExperimentalWarning firebase/cargar-datos.mjs"
+    "datos:cargar": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --disable-warning=ExperimentalWarning firebase/cargar-datos.mjs",
+    "datos:prueba": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --disable-warning=ExperimentalWarning firebase/cargar-datos.mjs --prueba"
   },
   "private": true,
   "packageManager": "npm@10.9.4",
