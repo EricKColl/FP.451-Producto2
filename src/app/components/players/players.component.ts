@@ -36,6 +36,12 @@ export class PlayersComponent {
   rangoEdad = '';
   fotosNoDisponibles = new Set<string>();
 
+  // Firestore entrega objetos nuevos en cada cambio: con el id, Angular reutiliza las tarjetas
+  // que ya existen y la lista no se redibuja entera (no pierde el desplazamiento ni el foco)
+  porId(_: number, jugador: Jugador): string {
+    return jugador.id;
+  }
+
   marcarFotoNoDisponible(id: string): void {
     this.fotosNoDisponibles.add(id);
   }

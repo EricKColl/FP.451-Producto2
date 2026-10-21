@@ -67,7 +67,7 @@
     </div>
 
     <ul id="lista" class="lista list-unstyled" aria-label="Jugadores de la plantilla">
-      <li *ngFor="let jugador of filtrados">
+      <li *ngFor="let jugador of filtrados; trackBy: porId">
         <!-- Dentro de un <button> solo se permiten elementos en línea: por eso todo son <span> -->
         <button
           type="button"
