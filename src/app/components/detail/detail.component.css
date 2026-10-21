@@ -710,3 +710,27 @@
     text-align: right;
   }
 }
+
+/* Escritorio estrecho (de 992 a unos 1150 px, como una tableta en horizontal): el escenario mide
+   menos de 720 px. La foto se reduce, los datos van en dos columnas y el código de la ficha se
+   oculta para que no choque con las pestañas */
+@media (min-width: 992px) {
+  @container (max-width: 720px) {
+    .escenario__codigo {
+      display: none;
+    }
+    .escenario__barra {
+      justify-content: flex-end;
+    }
+    .perfil {
+      grid-template-columns: minmax(150px, 190px) 1fr;
+      gap: 20px;
+    }
+    .perfil__nombre {
+      font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+    }
+    .datos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

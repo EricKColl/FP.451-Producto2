@@ -11,6 +11,8 @@ export class HeaderComponent {
   // Datos que le pasa el componente padre (App)
   @Input() nombreEquipo = '';
   @Input() totalJugadores = 0;
+  // Mientras llega la plantilla de Firestore no se muestra el número (sería 0)
+  @Input() cargando = false;
 
   // "EQUIPO BASKET" → "EQUIPO" en plata y "BASKET" en cian
   get primeraParte(): string {
