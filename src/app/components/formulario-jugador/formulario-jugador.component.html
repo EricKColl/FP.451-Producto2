@@ -1,0 +1,18 @@
+<dialog #dialogo class="dialogo vidrio hud" aria-labelledby="titulo-formulario">
+  <header class="dialogo__cab">
+    <div>
+      <p class="dialogo__codigo mono">{{ jugador ? 'EDITAR FICHA' : 'ALTA EN LA PLANTILLA' }}</p>
+      <h2 id="titulo-formulario" class="dialogo__titulo">
+        {{ jugador ? 'Editar jugador' : 'Nuevo jugador' }}
+      </h2>
+    </div>
+    <button type="button" class="boton-cerrar" aria-label="Cerrar formulario" (click)="cerrar()">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <!-- PERSONA 4: aquí va el formulario con todos los campos -->
+  <div class="dialogo__cuerpo">
+    <p class="dialogo__intro">Formulario en construcción (Persona 4).</p>
+  </div>
+</dialog>

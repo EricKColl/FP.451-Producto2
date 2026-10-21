@@ -34,9 +34,10 @@
   margin: 0 0 0 auto;
   color: var(--eb-texto-3);
   font-size: 0.72rem;
+  white-space: nowrap;
 }
 
-/* Filtros (Bootstrap: input-group, form-control y form-select con la paleta del proyecto) */
+/* Filtros (Bootstrap: input-group, form-control y form-select; los campos son globales) */
 .filtros {
   display: grid;
   gap: 12px;
@@ -47,74 +48,6 @@
   --bs-gutter-x: 12px;
   --bs-gutter-y: 12px;
 }
-.campo {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  align-content: start;
-}
-.campo__etq {
-  font-family: var(--eb-fuente-datos);
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--eb-texto-3);
-}
-.campo__caja {
-  border: 1px solid var(--eb-linea);
-  border-radius: var(--eb-radio-s);
-  background-color: rgb(5 10 20 / 0.6);
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
-}
-.campo__caja:focus-within,
-.form-select.campo__caja:focus {
-  border-color: var(--eb-cian);
-  box-shadow:
-    0 0 0 3px var(--eb-cian-tenue),
-    0 0 24px -6px var(--eb-cian);
-}
-.input-group.campo__caja {
-  flex-wrap: nowrap;
-}
-.campo__caja .input-group-text {
-  padding: 0 0 0 12px;
-  border: 0;
-  background: transparent;
-  color: var(--eb-texto-3);
-}
-.campo__caja .form-control,
-.form-select.campo__caja {
-  min-width: 0;
-  padding: 10px 12px;
-  background-color: transparent;
-  color: var(--eb-texto);
-  font-size: 0.92rem;
-  line-height: 1.5;
-}
-.campo__caja .form-control {
-  padding-left: 10px;
-  border: 0;
-  border-radius: 0 var(--eb-radio-s) var(--eb-radio-s) 0;
-  box-shadow: none;
-}
-.campo__caja .form-control::placeholder {
-  color: var(--eb-texto-3);
-}
-.form-select.campo__caja {
-  padding-right: 32px;
-  background-color: rgb(5 10 20 / 0.6);
-  /* Flecha del desplegable en el gris de las etiquetas (bi-chevron-down) */
-  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%236f8098' fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708'/%3e%3c/svg%3e");
-  background-position: right 12px center;
-  background-size: 12px 12px;
-  cursor: pointer;
-}
-.form-select.campo__caja option {
-  background: var(--eb-fondo-1);
-}
-
 .filtros__pie {
   flex-shrink: 0;
   display: flex;
@@ -123,28 +56,6 @@
   gap: 10px;
   min-height: 34px;
   margin-bottom: 14px;
-}
-.boton-fantasma {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
-  border: 1px solid var(--eb-linea);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--eb-texto-2);
-  font-size: 0.82rem;
-  line-height: 1.5;
-  transition:
-    color 0.2s,
-    border-color 0.2s,
-    background 0.2s;
-}
-.boton-fantasma:hover,
-.boton-fantasma:active {
-  color: var(--eb-texto);
-  border-color: var(--eb-linea-fuerte);
-  background: rgb(120 205 255 / 0.06);
 }
 .recuento {
   margin: 0;
