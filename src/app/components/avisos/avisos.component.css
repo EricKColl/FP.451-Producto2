@@ -1,0 +1,69 @@
+/* El popover se coloca en la esquina inferior derecha, sin fondo ni borde propios */
+.avisos {
+  inset: auto 20px 20px auto;
+  width: min(380px, calc(100vw - 32px));
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+/* Solo cuando está abierta (cerrada, el navegador la oculta) */
+.avisos:popover-open {
+  display: grid;
+  gap: 10px;
+}
+
+.aviso {
+  --tono: var(--eb-verde);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 12px;
+  padding: 14px 14px 14px 16px;
+  border-color: color-mix(in oklch, var(--tono) 45%, transparent);
+  color: var(--eb-texto);
+  box-shadow:
+    inset 3px 0 0 var(--tono),
+    0 20px 40px -20px rgb(0 0 0 / 0.9);
+  animation: entrar-aviso 0.4s var(--eb-suave);
+}
+.aviso--error {
+  --tono: var(--eb-rojo);
+}
+@keyframes entrar-aviso {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.aviso__icono {
+  color: var(--tono);
+  font-size: 1.1rem;
+  line-height: 1.3;
+}
+.aviso__texto {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+.aviso__cerrar {
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--eb-texto-3);
+  line-height: 1.3;
+  cursor: pointer;
+}
+.aviso__cerrar:hover {
+  color: var(--eb-texto);
+}
+
+/* Móvil: los avisos ocupan el ancho de la pantalla, abajo */
+@media (max-width: 575.98px) {
+  .avisos {
+    inset: auto 16px 16px 16px;
+    width: auto;
+  }
+}

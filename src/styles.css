@@ -25,6 +25,11 @@
   --eb-naranja: oklch(0.74 0.19 50);
   --eb-naranja-tenue: oklch(0.74 0.19 50 / 0.16);
 
+  /* Estados: operación correcta y error (avisos y formularios) */
+  --eb-verde: oklch(0.8 0.17 155);
+  --eb-rojo: oklch(0.7 0.2 22);
+  --eb-rojo-tenue: oklch(0.7 0.2 22 / 0.16);
+
   /* Texto */
   --eb-texto: #e9f2ff;
   --eb-texto-2: #a9b8cf;
@@ -174,6 +179,231 @@ h3 {
   border-color: var(--eb-naranja);
   color: var(--eb-naranja);
   transform: rotate(90deg);
+}
+
+/* Botones de texto: fantasma (secundario), primario (guardar) y peligro (borrar) */
+.boton-fantasma,
+.boton-primario,
+.boton-peligro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--eb-linea);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--eb-texto-2);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.boton-fantasma:hover,
+.boton-fantasma:active {
+  color: var(--eb-texto);
+  border-color: var(--eb-linea-fuerte);
+  background: rgb(120 205 255 / 0.06);
+}
+.boton-primario,
+.boton-peligro {
+  padding: 9px 18px;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+.boton-primario {
+  border-color: oklch(0.86 0.14 205 / 0.6);
+  background: var(--eb-cian-tenue);
+  color: var(--eb-cian);
+}
+.boton-primario:hover:not(:disabled) {
+  background: oklch(0.86 0.14 205 / 0.26);
+  color: var(--eb-texto);
+  box-shadow: 0 0 22px -6px var(--eb-cian);
+}
+.boton-peligro {
+  border-color: oklch(0.7 0.2 22 / 0.6);
+  background: var(--eb-rojo-tenue);
+  color: var(--eb-rojo);
+}
+.boton-peligro:hover:not(:disabled) {
+  background: oklch(0.7 0.2 22 / 0.28);
+  color: var(--eb-texto);
+  box-shadow: 0 0 22px -6px var(--eb-rojo);
+}
+.boton-fantasma:disabled,
+.boton-primario:disabled,
+.boton-peligro:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Ventanas: <dialog> nativo (Escape para cerrar, foco atrapado dentro y página inactiva) */
+.dialogo {
+  width: min(980px, calc(100vw - 32px));
+  max-height: min(86vh, 900px);
+  padding: 22px 24px;
+  color: var(--eb-texto);
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--eb-linea-fuerte) transparent;
+  background-color: var(--eb-vidrio-fuerte);
+}
+.dialogo::backdrop {
+  background: rgb(3 6 12 / 0.72);
+  backdrop-filter: blur(6px);
+}
+.dialogo[open] {
+  animation: abrir-dialogo 0.45s var(--eb-suave);
+}
+@keyframes abrir-dialogo {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+.dialogo__cab {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.dialogo__codigo {
+  margin: 0;
+  color: var(--eb-cian);
+  font-size: 0.72rem;
+}
+.dialogo__titulo {
+  margin: 4px 0 0;
+  font-family: var(--eb-fuente-titulos);
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+.dialogo__intro,
+.dialogo__nota {
+  margin: 12px 0;
+  color: var(--eb-texto-2);
+  font-size: 0.88rem;
+}
+.dialogo__nota {
+  color: var(--eb-texto-3);
+  font-size: 0.78rem;
+}
+/* Botones de la ventana: alineados a la derecha (en móvil, uno debajo de otro) */
+.dialogo__pie {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+@media (max-width: 767.98px) {
+  .dialogo {
+    padding: 18px 16px;
+  }
+  .dialogo__pie > * {
+    flex: 1 1 100%;
+  }
+}
+
+/* Campos de formulario (filtros, alta y edición): etiqueta, caja, ayuda y error */
+.campo {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  align-content: start;
+}
+.campo__etq {
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--eb-texto-3);
+}
+.campo__caja {
+  border: 1px solid var(--eb-linea);
+  border-radius: var(--eb-radio-s);
+  background-color: rgb(5 10 20 / 0.6);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.campo__caja:focus-within,
+.form-select.campo__caja:focus,
+.form-control.campo__caja:focus {
+  border-color: var(--eb-cian);
+  box-shadow:
+    0 0 0 3px var(--eb-cian-tenue),
+    0 0 24px -6px var(--eb-cian);
+}
+.input-group.campo__caja {
+  flex-wrap: nowrap;
+}
+.campo__caja .input-group-text {
+  padding: 0 0 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--eb-texto-3);
+}
+.campo__caja .form-control,
+.form-control.campo__caja,
+.form-select.campo__caja {
+  min-width: 0;
+  padding: 10px 12px;
+  background-color: transparent;
+  color: var(--eb-texto);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.campo__caja .form-control {
+  padding-left: 10px;
+  border: 0;
+  border-radius: 0 var(--eb-radio-s) var(--eb-radio-s) 0;
+  box-shadow: none;
+}
+.form-control.campo__caja {
+  background-color: rgb(5 10 20 / 0.6);
+}
+.campo__caja .form-control::placeholder,
+.form-control.campo__caja::placeholder {
+  color: var(--eb-texto-3);
+}
+.form-select.campo__caja {
+  padding-right: 32px;
+  background-color: rgb(5 10 20 / 0.6);
+  /* Flecha del desplegable en el gris de las etiquetas (bi-chevron-down) */
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%236f8098' fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-size: 12px 12px;
+  cursor: pointer;
+}
+.form-select.campo__caja option {
+  background: var(--eb-fondo-1);
+}
+/* Campo con error: borde rojo y mensaje debajo */
+.campo__caja.no-valido,
+.campo__caja.no-valido:focus,
+.campo__caja.no-valido:focus-within {
+  border-color: var(--eb-rojo);
+  box-shadow: 0 0 0 3px var(--eb-rojo-tenue);
+}
+.campo__ayuda,
+.campo__error {
+  margin: 0;
+  font-size: 0.76rem;
+}
+.campo__ayuda {
+  color: var(--eb-texto-3);
+}
+.campo__error {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--eb-rojo);
 }
 
 /* Deslizadores de progreso y volumen: la parte recorrida va en cian */

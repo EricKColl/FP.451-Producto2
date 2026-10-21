@@ -1,0 +1,25 @@
+<!-- aria-live: el lector de pantalla lee cada aviso nuevo sin mover el foco -->
+<div #zona class="avisos" popover="manual" aria-live="polite">
+  <div
+    *ngFor="let aviso of servicio.avisos()"
+    class="aviso vidrio"
+    [class.aviso--error]="aviso.tipo === 'error'"
+    [attr.role]="aviso.tipo === 'error' ? 'alert' : 'status'"
+  >
+    <i
+      class="bi aviso__icono"
+      [class.bi-check-circle-fill]="aviso.tipo === 'exito'"
+      [class.bi-exclamation-triangle-fill]="aviso.tipo === 'error'"
+      aria-hidden="true"
+    ></i>
+    <p class="aviso__texto">{{ aviso.texto }}</p>
+    <button
+      type="button"
+      class="aviso__cerrar"
+      aria-label="Cerrar aviso"
+      (click)="servicio.cerrar(aviso.id)"
+    >
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>

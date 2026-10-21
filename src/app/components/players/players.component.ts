@@ -4,10 +4,19 @@ import { FormsModule } from '@angular/forms';
 import { Jugador, POSICIONES } from '../../models/jugador.model';
 import { FiltroJugadoresPipe } from '../../pipes/filtro-jugadores-pipe';
 import { CreditosComponent } from '../creditos/creditos.component';
+import { NuevoJugadorComponent } from '../nuevo-jugador/nuevo-jugador.component';
 
 @Component({
   selector: 'app-players',
-  imports: [NgFor, NgIf, DecimalPipe, FormsModule, FiltroJugadoresPipe, CreditosComponent],
+  imports: [
+    NgFor,
+    NgIf,
+    DecimalPipe,
+    FormsModule,
+    FiltroJugadoresPipe,
+    CreditosComponent,
+    NuevoJugadorComponent,
+  ],
   templateUrl: './players.component.html',
   styleUrl: './players.component.css',
   changeDetection: ChangeDetectionStrategy.Eager,
