@@ -1,0 +1,68 @@
+rules_version = '2';
+
+// Reglas de seguridad de Cloud Firestore · EQUIPO BASKET (Producto 2)
+// La aplicación no tiene inicio de sesión: cualquiera puede leer la plantilla y modificarla,
+// pero solo se aceptan jugadores con todos los campos del modelo y valores válidos.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /jugadores/{jugadorId} {
+      allow read: if true;
+
+      // Alta: datos válidos y fechas de creación y modificación puestas por el servidor
+      allow create: if jugadorValido(request.resource.data)
+        && request.resource.data.creadoEn == request.time
+        && request.resource.data.actualizadoEn == request.time;
+
+      // Edición: datos válidos, la fecha de creación no cambia y la de modificación la pone el servidor
+      allow update: if jugadorValido(request.resource.data)
+        && request.resource.data.creadoEn == resource.data.creadoEn
+        && request.resource.data.actualizadoEn == request.time;
+
+      allow delete: if true;
+    }
+
+    // Cualquier otra colección queda cerrada
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function textoValido(valor, maximo) {
+      return valor is string && valor.size() > 0 && valor.size() <= maximo;
+    }
+
+    function numeroEntre(valor, minimo, maximo) {
+      return valor is number && valor >= minimo && valor <= maximo;
+    }
+
+    function enteroEntre(valor, minimo, maximo) {
+      return valor is int && valor >= minimo && valor <= maximo;
+    }
+
+    function jugadorValido(d) {
+      let campos = ['nombre', 'apellidos', 'dorsal', 'posicion', 'edad', 'altura', 'peso',
+                    'nacionalidad', 'foto', 'video', 'descripcion', 'estadisticas',
+                    'creadoEn', 'actualizadoEn'];
+      let estadisticas = ['puntos', 'rebotes', 'asistencias'];
+      return d.keys().hasAll(campos) && d.keys().hasOnly(campos)
+        && textoValido(d.nombre, 40)
+        && textoValido(d.apellidos, 60)
+        && enteroEntre(d.dorsal, 0, 99)
+        && d.posicion in ['Base', 'Escolta', 'Alero', 'Ala-pívot', 'Pívot']
+        && enteroEntre(d.edad, 16, 50)
+        && numeroEntre(d.altura, 1.5, 2.4)
+        && numeroEntre(d.peso, 50, 180)
+        && textoValido(d.nacionalidad, 40)
+        && d.foto is string && d.foto.size() <= 1000
+        && d.video is string && d.video.size() <= 1000
+        && textoValido(d.descripcion, 600)
+        && d.estadisticas is map
+        && d.estadisticas.keys().hasAll(estadisticas) && d.estadisticas.keys().hasOnly(estadisticas)
+        && numeroEntre(d.estadisticas.puntos, 0, 60)
+        && numeroEntre(d.estadisticas.rebotes, 0, 40)
+        && numeroEntre(d.estadisticas.asistencias, 0, 30)
+        && d.creadoEn is timestamp
+        && d.actualizadoEn is timestamp;
+    }
+  }
+}
