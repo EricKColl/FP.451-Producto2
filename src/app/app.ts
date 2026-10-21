@@ -13,12 +13,20 @@ import { HeaderComponent } from './components/header/header.component';
 import { PlayersComponent } from './components/players/players.component';
 import { DetailComponent } from './components/detail/detail.component';
 import { MediaComponent } from './components/media/media.component';
+import { AvisosComponent } from './components/avisos/avisos.component';
 import { Jugador } from './models/jugador.model';
 import { JugadoresService } from './services/jugadores.service';
 
 @Component({
   selector: 'app-root',
-  imports: [NgIf, HeaderComponent, PlayersComponent, DetailComponent, MediaComponent],
+  imports: [
+    NgIf,
+    HeaderComponent,
+    PlayersComponent,
+    DetailComponent,
+    MediaComponent,
+    AvisosComponent,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css',
   changeDetection: ChangeDetectionStrategy.Eager,

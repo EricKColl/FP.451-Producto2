@@ -38,6 +38,7 @@ Los 10 jugadores de partida están en [`firebase/jugadores-iniciales.json`](fire
 ```bash
 npm run datos:cargar                  # carga los 10 jugadores si la colección está vacía
 npm run datos:cargar -- --reiniciar   # borra la colección y vuelve a cargar los 10
+npm run datos:prueba                  # añade un jugador de prueba (bórralo al terminar)
 ```
 
 ## Ramas

@@ -1,0 +1,5 @@
+<button type="button" class="boton-fantasma" (click)="abrirFormulario()">
+  <i class="bi bi-person-plus" aria-hidden="true"></i> Nuevo
+</button>
+
+<app-formulario-jugador (guardar)="crearJugador($event)"></app-formulario-jugador>
