@@ -17,6 +17,8 @@ export class SubidaArchivoComponent {
   @Input({ required: true }) tipo!: TipoArchivo;
   // ENTRADA: dirección del archivo actual ('' si todavía no hay ninguno)
   @Input() url = '';
+  // ENTRADA: id del campo, para que la etiqueta del formulario apunte al botón de elegir
+  @Input() idCampo = '';
   // SALIDA: dirección del archivo recién subido. Permite usar [(url)] en el formulario
   @Output() urlChange = new EventEmitter<string>();
   // SALIDA: true al empezar a subir y false al terminar (el formulario no guarda mientras sube)

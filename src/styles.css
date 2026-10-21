@@ -241,16 +241,30 @@ h3 {
   cursor: not-allowed;
 }
 
-/* Ventanas: <dialog> nativo (Escape para cerrar, foco atrapado dentro y página inactiva) */
+/* Ventanas: <dialog> nativo (Escape para cerrar, foco atrapado dentro y página inactiva).
+   La ventana no se desplaza entera: lo hace su contenido (.dialogo__cuerpo), así la cabecera,
+   los botones y las esquinas HUD quedan siempre a la vista. */
 .dialogo {
   width: min(980px, calc(100vw - 32px));
   max-height: min(86vh, 900px);
   padding: 22px 24px;
   color: var(--eb-texto);
-  overflow: auto;
+  overflow: hidden;
+  background-color: var(--eb-vidrio-fuerte);
+}
+.dialogo[open] {
+  display: flex;
+  flex-direction: column;
+}
+.dialogo__cuerpo {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0 -4px;
+  padding: 0 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--eb-linea-fuerte) transparent;
-  background-color: var(--eb-vidrio-fuerte);
 }
 .dialogo::backdrop {
   background: rgb(3 6 12 / 0.72);
@@ -258,6 +272,9 @@ h3 {
 }
 .dialogo[open] {
   animation: abrir-dialogo 0.45s var(--eb-suave);
+}
+.dialogo__cab {
+  flex-shrink: 0;
 }
 @keyframes abrir-dialogo {
   from {
