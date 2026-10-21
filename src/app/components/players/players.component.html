@@ -109,9 +109,24 @@
       </li>
     </ul>
 
-    <p *ngIf="filtrados.length === 0" class="sin-resultados">
-      <i class="bi bi-radar" aria-hidden="true"></i>
-      Ningún jugador coincide con la búsqueda. Prueba con otros filtros o pulsa «Limpiar filtros».
+    <!-- Lista vacía: conectando con Firestore, sin conexión, plantilla vacía o filtros sin resultados -->
+    <p *ngIf="filtrados.length === 0" class="sin-resultados" role="status">
+      <ng-container *ngIf="cargando">
+        <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+        Conectando con la base de datos…
+      </ng-container>
+      <ng-container *ngIf="!cargando && errorConexion">
+        <i class="bi bi-wifi-off" aria-hidden="true"></i>
+        No se ha podido conectar con la base de datos. Comprueba tu conexión y recarga la página.
+      </ng-container>
+      <ng-container *ngIf="!cargando && !errorConexion && jugadores.length === 0">
+        <i class="bi bi-people" aria-hidden="true"></i>
+        La plantilla está vacía.
+      </ng-container>
+      <ng-container *ngIf="!cargando && !errorConexion && jugadores.length > 0">
+        <i class="bi bi-radar" aria-hidden="true"></i>
+        Ningún jugador coincide con la búsqueda. Prueba con otros filtros o pulsa «Limpiar filtros».
+      </ng-container>
     </p>
   </ng-container>
 
@@ -122,4 +137,4 @@
   </p>
 </section>
 
-<app-creditos #creditos></app-creditos>
+<app-creditos #creditos [jugadores]="jugadores"></app-creditos>

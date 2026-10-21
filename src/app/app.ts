@@ -8,12 +8,13 @@ import {
   Injector,
 } from '@angular/core';
 import { NgIf } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HeaderComponent } from './components/header/header.component';
 import { PlayersComponent } from './components/players/players.component';
 import { DetailComponent } from './components/detail/detail.component';
 import { MediaComponent } from './components/media/media.component';
 import { Jugador } from './models/jugador.model';
-import { JUGADORES } from './data/jugadores.data';
+import { JugadoresService } from './services/jugadores.service';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,11 @@ import { JUGADORES } from './data/jugadores.data';
 })
 export class App {
   nombreEquipo = 'EQUIPO BASKET';
-  totalJugadores = JUGADORES.length;
+
+  // Plantilla en tiempo real desde Cloud Firestore (JugadoresService)
+  jugadores: Jugador[] = [];
+  cargando = true;
+  errorConexion = false;
 
   // Jugador elegido en el listado (null = ninguno)
   jugadorActual: Jugador | null = null;
@@ -34,6 +39,44 @@ export class App {
   private injector = inject(Injector);
   private cdr = inject(ChangeDetectorRef);
   private cierrePendiente?: number;
+
+  constructor() {
+    // Suscripción a la colección «jugadores»: se cancela sola al destruirse la aplicación
+    inject(JugadoresService)
+      .jugadores$.pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (lista) => this.alRecibirPlantilla(lista),
+        error: () => {
+          this.cargando = false;
+          this.errorConexion = true;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  get totalJugadores(): number {
+    return this.jugadores.length;
+  }
+
+  // Cada cambio en Firestore llega aquí. Si cambian los datos del jugador abierto, su ficha
+  // se actualiza sin recargar; si el jugador se ha borrado, la ficha se cierra.
+  private alRecibirPlantilla(lista: Jugador[]): void {
+    this.jugadores = lista;
+    this.cargando = false;
+    this.errorConexion = false;
+    const actual = this.jugadorActual;
+    if (actual) {
+      const nuevo = lista.find((j) => j.id === actual.id);
+      if (!nuevo) {
+        if (this.fichaAbierta) this.onCerrarDetalle();
+        else this.jugadorActual = null;
+      } else if (JSON.stringify(nuevo) !== JSON.stringify(actual)) {
+        // Solo se sustituye si ha cambiado: así la ficha y el vídeo no se reinician sin motivo
+        this.jugadorActual = nuevo;
+      }
+    }
+    this.cdr.markForCheck();
+  }
 
   // Lo llama PlayersComponent mediante su @Output (jugadorSeleccionado)
   onJugadorSeleccionado(jugador: Jugador): void {

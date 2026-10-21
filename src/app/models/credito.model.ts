@@ -1,6 +1,6 @@
 // Autoría y licencia de la fotografía de un jugador (Wikimedia Commons).
 export interface Credito {
-  idJugador: number; // id del jugador en JUGADORES
+  idJugador: string; // id del documento del jugador en Firestore
   autor: string;
   licencia: string; // ej. 'CC BY-SA 2.0'
   licenciaUrl: string;
@@ -10,7 +10,7 @@ export interface Credito {
 
 // Vídeo original (YouTube) del que procede el fragmento de cada jugador.
 export interface CreditoVideo {
-  idJugador: number;
+  idJugador: string;
   titulo: string;
   canal: string;
   url: string;

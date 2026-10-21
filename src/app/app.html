@@ -15,6 +15,9 @@
     <!-- ZONA 1: LISTADO + FILTROS -->
     <div class="col-12 col-lg-auto columna-plantilla">
       <app-players
+        [jugadores]="jugadores"
+        [cargando]="cargando"
+        [errorConexion]="errorConexion"
         [idSeleccionado]="fichaAbierta && jugadorActual ? jugadorActual.id : null"
         (jugadorSeleccionado)="onJugadorSeleccionado($event)"
       ></app-players>
@@ -30,7 +33,7 @@
         <app-detail
           *ngIf="jugadorActual; else sinSeleccion"
           [jugador]="jugadorActual"
-          [totalJugadores]="totalJugadores"
+          [plantilla]="jugadores"
           (cerrar)="onCerrarDetalle()"
         >
           <app-media [jugador]="jugadorActual"></app-media>
@@ -49,8 +52,15 @@
               Elige a cualquier jugador de la plantilla para proyectar su ficha, sus estadísticas y
               su vídeo.
             </p>
-            <p class="reposo__pista mono">
-              PROYECTOR EN ESPERA · {{ totalJugadores }} PERFILES CARGADOS
+            <!-- Estado de la conexión con Cloud Firestore -->
+            <p class="reposo__pista mono" role="status">
+              {{
+                errorConexion
+                  ? 'SIN CONEXIÓN CON LA BASE DE DATOS'
+                  : cargando
+                    ? 'CONECTANDO CON FIRESTORE…'
+                    : 'PROYECTOR EN ESPERA · ' + totalJugadores + ' PERFILES CARGADOS'
+              }}
             </p>
           </div>
         </ng-template>
@@ -60,7 +70,7 @@
 </main>
 
 <footer class="pie">
-  <span class="pie__producto">Producto 1. [FrontEnd mediante Angular]</span>
+  <span class="pie__producto">Producto 2. [Accediendo desde cualquier lugar]</span>
   <span class="pie__sep" aria-hidden="true"></span>
   <span class="pie__equipo">Front Stack Attack</span>
   <span class="pie__sep" aria-hidden="true"></span>

@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { Credito } from '../../models/credito.model';
 import { Jugador } from '../../models/jugador.model';
-import { CREDITOS } from '../../data/creditos.data';
-import { JUGADORES } from '../../data/jugadores.data';
+import { CREDITOS, fotoOriginal } from '../../data/creditos.data';
 
 interface FilaCredito extends Credito {
   jugador: Jugador;
@@ -21,10 +20,15 @@ interface FilaCredito extends Credito {
 export class CreditosComponent {
   @ViewChild('dialogo', { static: true }) dialogo!: ElementRef<HTMLDialogElement>;
 
-  readonly filas: FilaCredito[] = CREDITOS.flatMap((credito) => {
-    const jugador = JUGADORES.find((j) => j.id === credito.idJugador);
-    return jugador ? [{ ...credito, jugador }] : [];
-  });
+  // Plantilla actual (Firestore): solo se acreditan las fotos originales que siguen en uso
+  @Input() jugadores: Jugador[] = [];
+
+  get filas(): FilaCredito[] {
+    return CREDITOS.flatMap((credito) => {
+      const jugador = this.jugadores.find((j) => j.id === credito.idJugador);
+      return jugador && jugador.foto === fotoOriginal(jugador.id) ? [{ ...credito, jugador }] : [];
+    });
+  }
 
   private origen: HTMLElement | null = null;
 

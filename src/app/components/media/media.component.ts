@@ -5,6 +5,7 @@ import {
   HostListener,
   Input,
   OnChanges,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
@@ -114,8 +115,12 @@ export class MediaComponent implements OnChanges {
     return this.silenciado ? 0 : this.volumen;
   }
 
-  // Cada selección comienza con su propio estado de carga.
-  ngOnChanges(): void {
+  // Cada selección comienza con su propio estado de carga. Si solo cambian otros datos del
+  // jugador (edición en tiempo real), el vídeo sigue donde estaba.
+  ngOnChanges(cambios: SimpleChanges): void {
+    const anterior: Jugador | undefined = cambios['jugador']?.previousValue;
+    if (anterior && anterior.id === this.jugador.id && anterior.video === this.jugador.video)
+      return;
     this.stop();
     this.duracion = 0;
     this.videoDisponible = false;

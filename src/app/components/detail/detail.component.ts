@@ -14,14 +14,14 @@ import {
   OnDestroy,
   Output,
   QueryList,
+  SimpleChanges,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
 import { DecimalPipe, formatNumber, NgClass, NgFor, NgIf, UpperCasePipe } from '@angular/common';
 import { Estadisticas, Jugador } from '../../models/jugador.model';
 import { Credito, CreditoVideo } from '../../models/credito.model';
-import { JUGADORES } from '../../data/jugadores.data';
-import { CREDITOS, CREDITOS_VIDEO } from '../../data/creditos.data';
+import { CREDITOS, CREDITOS_VIDEO, fotoOriginal, videoOriginal } from '../../data/creditos.data';
 import { MediaComponent } from '../media/media.component';
 
 // Las tres secciones de la ficha. fx, fy y fs colocan la "cámara" sobre la foto de fondo.
@@ -67,24 +67,38 @@ const VISTAS: Vista[] = [
 
 type ClaveEstadistica = keyof Estadisticas;
 
-// Referencias de la plantilla para comparar a cada jugador con el resto
-const valores = (clave: ClaveEstadistica) => JUGADORES.map((j) => j.estadisticas[clave]);
-const REFERENCIA: Record<ClaveEstadistica, { max: number; media: number }> = {
-  puntos: { max: Math.max(...valores('puntos')), media: media(valores('puntos')) },
-  rebotes: { max: Math.max(...valores('rebotes')), media: media(valores('rebotes')) },
-  asistencias: { max: Math.max(...valores('asistencias')), media: media(valores('asistencias')) },
-};
-const ALTURA = {
-  min: Math.min(...JUGADORES.map((j) => j.altura)),
-  max: Math.max(...JUGADORES.map((j) => j.altura)),
-};
-const PESO = {
-  min: Math.min(...JUGADORES.map((j) => j.peso)),
-  max: Math.max(...JUGADORES.map((j) => j.peso)),
-};
+// Referencias de la plantilla actual (Firestore) para comparar a cada jugador con el resto
+interface Referencias {
+  estadisticas: Record<ClaveEstadistica, { max: number; media: number }>;
+  altura: { min: number; max: number };
+  peso: { min: number; max: number };
+}
+
+function calcularReferencias(plantilla: Jugador[]): Referencias {
+  const valores = (clave: ClaveEstadistica) => plantilla.map((j) => j.estadisticas[clave]);
+  const rango = (lista: number[]) => ({ min: Math.min(...lista), max: Math.max(...lista) });
+  const estadistica = (clave: ClaveEstadistica) => ({
+    max: Math.max(...valores(clave)),
+    media: media(valores(clave)),
+  });
+  return {
+    estadisticas: {
+      puntos: estadistica('puntos'),
+      rebotes: estadistica('rebotes'),
+      asistencias: estadistica('asistencias'),
+    },
+    altura: rango(plantilla.map((j) => j.altura)),
+    peso: rango(plantilla.map((j) => j.peso)),
+  };
+}
 
 function media(lista: number[]): number {
   return lista.reduce((suma, valor) => suma + valor, 0) / lista.length;
+}
+
+// Fracción entre 0 y 1 (si el máximo es 0, la barra queda vacía)
+function fraccionDe(valor: number, maximo: number): number {
+  return maximo > 0 ? valor / maximo : 0;
 }
 
 interface Anillo {
@@ -119,7 +133,8 @@ const CIRCUNFERENCIA = 289; // 2·π·46, radio de los anillos
 export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
   // ENTRADA: el jugador que el usuario ha pulsado en el listado
   @Input({ required: true }) jugador!: Jugador;
-  @Input() totalJugadores = JUGADORES.length;
+  // Plantilla completa (Firestore): para comparar estadísticas y numerar la ficha
+  @Input() plantilla: Jugador[] = [];
   // SALIDA: avisamos al padre de que hay que cerrar el detalle
   @Output() cerrar = new EventEmitter<void>();
 
@@ -152,9 +167,12 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
   private movimiento?: Animation;
   private inicioDeslizar: { x: number; y: number } | null = null;
 
-  // Cada jugador nuevo vuelve a Perfil y se "materializa" en el escenario
-  ngOnChanges(): void {
+  // Cada jugador nuevo vuelve a Perfil y se "materializa" en el escenario. Si solo cambian sus
+  // datos (edición en tiempo real desde Firestore), la ficha se actualiza sin moverse de pestaña.
+  ngOnChanges(cambios: SimpleChanges): void {
     const j = this.jugador;
+    const otroJugador = cambios['jugador'] && cambios['jugador'].previousValue?.id !== j.id;
+    const ref = calcularReferencias(this.plantilla.length ? this.plantilla : [j]);
     this.datos = [
       { etiqueta: 'Nombre', valor: j.nombre },
       { etiqueta: 'Apellidos', valor: j.apellidos },
@@ -168,16 +186,21 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
     this.equipo = punto > 0 ? j.descripcion.slice(0, punto) : '';
     this.resumen = punto > 0 ? j.descripcion.slice(punto + 2) : j.descripcion;
     this.temporada = j.descripcion.match(/temporada (\d{4}-\d{2,4})/)?.[1] ?? '';
-    this.credito = CREDITOS.find((c) => c.idJugador === j.id);
-    this.creditoVideo = CREDITOS_VIDEO.find((c) => c.idJugador === j.id);
+    // Los créditos solo se muestran mientras el jugador conserve su foto o su vídeo original
+    this.credito =
+      j.foto === fotoOriginal(j.id) ? CREDITOS.find((c) => c.idJugador === j.id) : undefined;
+    this.creditoVideo =
+      j.video === videoOriginal(j.id)
+        ? CREDITOS_VIDEO.find((c) => c.idJugador === j.id)
+        : undefined;
 
     const s = j.estadisticas;
     const anillo = (clave: ClaveEstadistica, etiqueta: string, naranja = false): Anillo => ({
       etiqueta,
       valor: s[clave],
       mostrado: 0,
-      max: REFERENCIA[clave].max,
-      fraccion: s[clave] / REFERENCIA[clave].max,
+      max: ref.estadisticas[clave].max,
+      fraccion: fraccionDe(s[clave], ref.estadisticas[clave].max),
       naranja,
     });
     this.anillos = [
@@ -188,8 +211,8 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
     const barra = (clave: ClaveEstadistica, etiqueta: string): Barra => ({
       etiqueta,
       texto: this.numero(s[clave], '1.1-1'),
-      fraccion: s[clave] / REFERENCIA[clave].max,
-      media: REFERENCIA[clave].media / REFERENCIA[clave].max,
+      fraccion: fraccionDe(s[clave], ref.estadisticas[clave].max),
+      media: fraccionDe(ref.estadisticas[clave].media, ref.estadisticas[clave].max),
     });
     this.barras = [
       barra('puntos', 'Puntos'),
@@ -198,17 +221,22 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
       {
         etiqueta: 'Altura',
         texto: `${this.numero(j.altura, '1.2-2')} m`,
-        fraccion: (j.altura - ALTURA.min + 0.05) / (ALTURA.max - ALTURA.min + 0.05),
+        fraccion: (j.altura - ref.altura.min + 0.05) / (ref.altura.max - ref.altura.min + 0.05),
         media: null,
       },
       {
         etiqueta: 'Peso',
         texto: `${j.peso} kg`,
-        fraccion: (j.peso - PESO.min + 5) / (PESO.max - PESO.min + 5),
+        fraccion: (j.peso - ref.peso.min + 5) / (ref.peso.max - ref.peso.min + 5),
         media: null,
       },
     ];
 
+    if (!otroJugador) {
+      // Mismo jugador con datos nuevos: las cifras se muestran directamente, sin animación
+      if (this.statsVisibles) this.anillos.forEach((a) => (a.mostrado = a.valor));
+      return;
+    }
     this.cancelarAnimaciones();
     this.vista = 0;
     this.statsVisibles = false;
@@ -252,12 +280,14 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
     this.pestanas.get(siguiente)?.nativeElement.focus();
   }
 
+  // "FICHA 03/10": posición del jugador en la plantilla y número de jugadores
   get codigo(): string {
-    return String(this.jugador.id).padStart(2, '0');
+    const posicion = this.plantilla.findIndex((j) => j.id === this.jugador.id) + 1;
+    return String(posicion || 1).padStart(2, '0');
   }
 
   get total(): string {
-    return String(this.totalJugadores).padStart(2, '0');
+    return String(this.plantilla.length || 1).padStart(2, '0');
   }
 
   // "Maryland GovPics; fotógrafo Scott Henderson" → "Maryland GovPics"

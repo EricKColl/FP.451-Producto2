@@ -12,7 +12,7 @@ export interface Estadisticas {
 
 // "Molde" de un jugador: TODOS los jugadores deben tener exactamente estos campos.
 export interface Jugador {
-  id: number;
+  id: string; // identificador del documento en Firestore (colección «jugadores»)
   nombre: string;
   apellidos: string;
   dorsal: number;
@@ -21,8 +21,11 @@ export interface Jugador {
   altura: number; // en metros, ej. 1.98
   peso: number; // en kilos
   nacionalidad: string;
-  foto: string; // ej. 'assets/img/jugadores/jugador-1.jpg'
-  video: string; // ej. 'assets/videos/jugador-1.mp4'
+  foto: string; // ruta de assets o URL del archivo subido
+  video: string; // ruta de assets o URL del archivo subido
   descripcion: string;
   estadisticas: Estadisticas;
 }
+
+// Datos que se guardan al crear o editar un jugador: todo menos el id, que lo asigna Firestore
+export type DatosJugador = Omit<Jugador, 'id'>;

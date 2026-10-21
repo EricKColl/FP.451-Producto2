@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { DecimalPipe, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Jugador, POSICIONES } from '../../models/jugador.model';
-import { JUGADORES } from '../../data/jugadores.data';
 import { FiltroJugadoresPipe } from '../../pipes/filtro-jugadores-pipe';
 import { CreditosComponent } from '../creditos/creditos.component';
 
@@ -14,18 +13,21 @@ import { CreditosComponent } from '../creditos/creditos.component';
   changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class PlayersComponent {
-  // CONTRATO (no cambiar nombres): lo rellena Persona 2
-  @Input() idSeleccionado: number | null = null;
+  // CONTRATO (no cambiar nombres)
+  // Plantilla en tiempo real que App recibe de Firestore
+  @Input({ required: true }) jugadores: Jugador[] = [];
+  @Input() cargando = false;
+  @Input() errorConexion = false;
+  @Input() idSeleccionado: string | null = null;
   @Output() jugadorSeleccionado = new EventEmitter<Jugador>();
 
-  jugadores: Jugador[] = JUGADORES;
   posiciones = POSICIONES;
   textoBusqueda = '';
   posicionSeleccionada = '';
   rangoEdad = '';
-  fotosNoDisponibles = new Set<number>();
+  fotosNoDisponibles = new Set<string>();
 
-  marcarFotoNoDisponible(id: number): void {
+  marcarFotoNoDisponible(id: string): void {
     this.fotosNoDisponibles.add(id);
   }
 
