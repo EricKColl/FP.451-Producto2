@@ -1,0 +1,158 @@
+<div #reproductor class="pantalla vidrio hud" role="region" aria-label="Vídeo del jugador">
+  <h2 class="pantalla__cab mono">
+    <span class="rec" aria-hidden="true"></span> REPETICIÓN ·
+    <b>{{ jugador.nombre | uppercase }} {{ jugador.apellidos | uppercase }}</b>
+  </h2>
+
+  <!-- ratio-16x9 de Bootstrap: el vídeo mantiene la proporción a cualquier ancho -->
+  <div class="pantalla__marco ratio ratio-16x9">
+    <video
+      #video
+      [hidden]="errorDeCarga"
+      [src]="jugador.video || null"
+      [volume]="volumen / 100"
+      [muted]="silenciado"
+      [attr.aria-label]="'Vídeo de ' + jugador.nombre + ' ' + jugador.apellidos"
+      preload="metadata"
+      playsinline
+      (loadedmetadata)="alCargarMetadatos()"
+      (durationchange)="actualizarDuracion()"
+      (timeupdate)="alActualizarTiempo()"
+      (error)="alFallarCarga()"
+      (play)="alReproducir()"
+      (pause)="alPausar()"
+      (ended)="alPausar()"
+      (volumechange)="alCambiarVolumen()"
+      (webkitbeginfullscreen)="alEntrarPantallaCompletaNativa()"
+      (webkitendfullscreen)="alSalirPantallaCompletaNativa()"
+    >
+      Tu navegador no admite el elemento de vídeo HTML5.
+    </video>
+
+    <!-- Sin vídeo: "señal no disponible" en lugar de la imagen -->
+    <div class="senal" [hidden]="!errorDeCarga" role="status">
+      <i class="bi bi-broadcast" aria-hidden="true"></i>
+      <b>SEÑAL NO DISPONIBLE</b>
+      <span>
+        No se ha podido cargar el vídeo de {{ jugador.nombre }} {{ jugador.apellidos }}. Puede que
+        todavía no esté disponible o que el formato no sea compatible.
+      </span>
+    </div>
+  </div>
+
+  <div class="controles">
+    <div class="progreso">
+      <input
+        type="range"
+        class="rango"
+        min="0"
+        [max]="duracion || 1"
+        step="0.1"
+        [value]="tiempoActual"
+        [style.--relleno]="porcentajeProgreso + '%'"
+        [disabled]="!videoDisponible || errorDeCarga || duracion <= 0"
+        aria-label="Posición del vídeo"
+        [attr.aria-valuetext]="
+          formatearTiempo(tiempoActual) +
+          ' de ' +
+          (duracion > 0 ? formatearTiempo(duracion) : 'duración desconocida')
+        "
+        (input)="buscar($event)"
+      />
+      <p class="tiempo mono">
+        {{ formatearTiempo(tiempoActual) }} /
+        {{ duracion > 0 ? formatearTiempo(duracion) : '--:--' }}
+      </p>
+    </div>
+
+    <div class="fila-controles">
+      <div class="grupo" role="group" aria-label="Controles del vídeo">
+        <button
+          type="button"
+          class="ctrl ctrl--play"
+          aria-label="Reproducir"
+          title="Reproducir o reanudar"
+          [disabled]="!videoDisponible || errorDeCarga || reproduciendo"
+          (click)="reproducir()"
+        >
+          <i class="bi bi-play-fill" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="ctrl"
+          aria-label="Pausar"
+          title="Pausar"
+          [disabled]="!videoDisponible || errorDeCarga || !reproduciendo"
+          (click)="pausar()"
+        >
+          <i class="bi bi-pause-fill" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="ctrl"
+          aria-label="Stop"
+          title="Stop: detener y volver al inicio"
+          [disabled]="!videoDisponible || errorDeCarga"
+          (click)="stop()"
+        >
+          <i class="bi bi-stop-fill" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="grupo" role="group" aria-label="Controles de audio">
+        <button
+          type="button"
+          class="ctrl"
+          [attr.aria-label]="silenciado || volumen === 0 ? 'Recuperar sonido' : 'Silenciar'"
+          [title]="silenciado || volumen === 0 ? 'Recuperar sonido' : 'Silenciar'"
+          [disabled]="!videoDisponible || errorDeCarga"
+          (click)="alternarSilencio()"
+        >
+          <i
+            class="bi"
+            [class.bi-volume-mute-fill]="silenciado || volumen === 0"
+            [class.bi-volume-up-fill]="!silenciado && volumen > 0"
+            aria-hidden="true"
+          ></i>
+        </button>
+        <input
+          type="range"
+          class="rango rango--volumen"
+          min="0"
+          max="100"
+          step="1"
+          [value]="volumen"
+          [style.--relleno]="porcentajeVolumen + '%'"
+          [disabled]="!videoDisponible || errorDeCarga"
+          aria-label="Volumen del vídeo"
+          [attr.aria-valuetext]="volumen + ' %' + (silenciado ? ', silenciado' : '')"
+          (input)="cambiarVolumen($event)"
+        />
+        <button
+          type="button"
+          class="ctrl"
+          [attr.aria-label]="
+            pantallaCompleta ? 'Salir de pantalla completa' : 'Entrar en pantalla completa'
+          "
+          [title]="pantallaCompleta ? 'Salir de pantalla completa' : 'Entrar en pantalla completa'"
+          [disabled]="!pantallaCompleta && (!videoDisponible || errorDeCarga)"
+          (click)="alternarPantallaCompleta()"
+        >
+          <i
+            class="bi"
+            [class.bi-fullscreen]="!pantallaCompleta"
+            [class.bi-fullscreen-exit]="pantallaCompleta"
+            aria-hidden="true"
+          ></i>
+        </button>
+      </div>
+    </div>
+
+    <p class="aviso" [hidden]="!errorDeReproduccion" role="alert">
+      {{ errorDeReproduccion }}
+    </p>
+    <p class="aviso" [hidden]="!errorPantallaCompleta" role="alert">
+      {{ errorPantallaCompleta }}
+    </p>
+  </div>
+</div>

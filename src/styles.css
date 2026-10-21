@@ -1,0 +1,248 @@
+/* =========================================================
+   ESTILOS GLOBALES · EQUIPO BASKET
+   Sistema visual del rediseño: azul noche, cian holográfico
+   para la interfaz y naranja balón para la energía.
+   Bootstrap 5.3 en modo oscuro es la base; aquí se ajustan sus
+   variables a la paleta del proyecto y se definen las piezas
+   que comparten varios componentes.
+   Nadie más que Persona 1 toca este archivo.
+   ========================================================= */
+:root,
+[data-bs-theme='dark'] {
+  /* Fondos y superficies */
+  --eb-fondo-0: #05080f;
+  --eb-fondo-1: #0a1222;
+  --eb-fondo-2: #0f1b31;
+  --eb-vidrio: rgb(16 28 50 / 0.58);
+  --eb-vidrio-fuerte: rgb(13 23 42 / 0.82);
+  --eb-linea: rgb(120 205 255 / 0.14);
+  --eb-linea-fuerte: rgb(120 205 255 / 0.32);
+
+  /* Acentos */
+  --eb-cian: oklch(0.86 0.14 205);
+  --eb-cian-tenue: oklch(0.86 0.14 205 / 0.16);
+  --eb-azul: oklch(0.62 0.2 258);
+  --eb-naranja: oklch(0.74 0.19 50);
+  --eb-naranja-tenue: oklch(0.74 0.19 50 / 0.16);
+
+  /* Texto */
+  --eb-texto: #e9f2ff;
+  --eb-texto-2: #a9b8cf;
+  --eb-texto-3: #6f8098;
+
+  /* Tipografía */
+  --eb-fuente-titulos: 'Chakra Petch', 'Segoe UI', sans-serif;
+  --eb-fuente-texto: 'Inter', system-ui, sans-serif;
+  --eb-fuente-datos: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Forma y movimiento */
+  --eb-radio: 14px;
+  --eb-radio-s: 10px;
+  --eb-suave: cubic-bezier(0.22, 1, 0.36, 1);
+  --eb-camara: cubic-bezier(0.65, 0, 0.35, 1);
+  --eb-cabecera: 96px;
+
+  /* Bootstrap: misma paleta y tipografía */
+  --bs-body-font-family: var(--eb-fuente-texto);
+  --bs-body-font-size: 0.9375rem;
+  --bs-body-color: var(--eb-texto);
+  --bs-body-bg: var(--eb-fondo-0);
+  --bs-secondary-color: var(--eb-texto-2);
+  --bs-tertiary-color: var(--eb-texto-3);
+  --bs-border-color: var(--eb-linea);
+  --bs-link-color: var(--eb-cian);
+  --bs-link-color-rgb: 46, 235, 252;
+  --bs-link-hover-color: var(--eb-texto);
+  --bs-link-hover-color-rgb: 233, 242, 255;
+  --bs-heading-color: var(--eb-texto);
+  --bs-focus-ring-color: var(--eb-cian-tenue);
+}
+
+@media (max-width: 991.98px) {
+  :root {
+    --eb-cabecera: 78px;
+  }
+}
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Los títulos siguen el interlineado del texto; cada componente fija el suyo cuando lo necesita */
+h1,
+h2,
+h3 {
+  line-height: inherit;
+}
+
+/* Datos, códigos y etiquetas */
+.mono {
+  font-family: var(--eb-fuente-datos);
+  letter-spacing: 0.02em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--eb-cian);
+  outline-offset: 2px;
+}
+
+/* Enlace para saltar directamente a la plantilla con el teclado */
+.saltar {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 100;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--eb-cian);
+  color: var(--eb-fondo-0);
+  font-weight: 600;
+  text-decoration: none;
+}
+.saltar:focus {
+  top: 12px;
+}
+
+/* Panel de vidrio: fondo translúcido con desenfoque */
+.vidrio {
+  position: relative;
+  background: linear-gradient(180deg, rgb(20 34 60 / 0.6), rgb(9 16 30 / 0.66));
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--eb-linea);
+  border-radius: var(--eb-radio);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.05),
+    0 30px 60px -30px rgb(0 0 0 / 0.8);
+}
+
+/* Esquinas HUD: escuadras cian que siguen el radio del panel */
+.hud {
+  position: relative;
+}
+.hud::before,
+.hud::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  width: 26px;
+  height: 26px;
+  border: 0 solid var(--eb-cian);
+  pointer-events: none;
+  filter: drop-shadow(0 0 5px oklch(0.86 0.14 205 / 0.7));
+}
+.hud::before {
+  top: -1px;
+  left: -1px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  border-top-left-radius: inherit;
+}
+.hud::after {
+  right: -1px;
+  bottom: -1px;
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+  border-bottom-right-radius: inherit;
+}
+
+/* Botón redondo de cerrar (ficha y créditos) */
+.boton-cerrar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--eb-linea);
+  border-radius: 50%;
+  background: rgb(5 10 20 / 0.6);
+  color: var(--eb-texto);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    transform 0.3s var(--eb-suave);
+}
+.boton-cerrar:hover {
+  border-color: var(--eb-naranja);
+  color: var(--eb-naranja);
+  transform: rotate(90deg);
+}
+
+/* Deslizadores de progreso y volumen: la parte recorrida va en cian */
+.rango {
+  --relleno: 0%;
+  flex: 1;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+.rango:focus {
+  box-shadow: none;
+}
+.rango::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--eb-cian) var(--relleno),
+    rgb(120 205 255 / 0.15) var(--relleno)
+  );
+}
+.rango::-moz-range-track {
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--eb-cian) var(--relleno),
+    rgb(120 205 255 / 0.15) var(--relleno)
+  );
+}
+.rango::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--eb-texto);
+  box-shadow:
+    0 0 0 3px oklch(0.86 0.14 205 / 0.35),
+    0 0 12px var(--eb-cian);
+}
+.rango::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--eb-texto);
+  box-shadow:
+    0 0 0 3px oklch(0.86 0.14 205 / 0.35),
+    0 0 12px var(--eb-cian);
+}
+.rango:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Movimiento reducido: todo quieto, nada se pierde */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

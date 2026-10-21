@@ -1,0 +1,196 @@
+/* La cabecera se queda fija arriba al desplazarse */
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: block;
+}
+
+.cabecera {
+  position: relative;
+  height: var(--eb-cabecera);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 clamp(16px, 3vw, 40px);
+  background: linear-gradient(180deg, rgb(5 8 15 / 0.92), rgb(5 8 15 / 0.7));
+  backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid var(--eb-linea);
+}
+.cabecera::after {
+  /* filo de luz cian → naranja */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--eb-cian) 30%,
+    var(--eb-naranja) 70%,
+    transparent
+  );
+  opacity: 0.7;
+}
+.cabecera__marca {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.cabecera__textos {
+  text-align: center;
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--eb-fuente-titulos);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  letter-spacing: 0.16em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.titulo__a {
+  background: linear-gradient(180deg, #ffffff 0%, #c9d6e8 55%, #8ea3bf 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.titulo__b {
+  position: relative;
+  background: linear-gradient(
+    100deg,
+    var(--eb-cian) 0%,
+    var(--eb-cian) 40%,
+    #ffffff 50%,
+    var(--eb-cian) 60%,
+    var(--eb-cian) 100%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px oklch(0.86 0.14 205 / 0.45));
+  animation: destello 7s var(--eb-suave) 0.6s infinite;
+}
+@keyframes destello {
+  0%,
+  70% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -50% 0;
+  }
+}
+.cabecera__sub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 7px 0 0;
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--eb-texto-2);
+}
+.cabecera__punto {
+  width: 4px;
+  height: 4px;
+  background: var(--eb-naranja);
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px var(--eb-naranja);
+}
+
+/* Balón 3D */
+.balon {
+  position: relative;
+  width: 62px;
+  height: 62px;
+  flex-shrink: 0;
+  perspective: 300px;
+  transform-style: preserve-3d;
+}
+.balon__svg {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 6px 14px oklch(0.74 0.19 50 / 0.45));
+  animation: balanceo 7s ease-in-out infinite;
+}
+.balon__costuras {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  animation: girar 22s linear infinite;
+}
+.balon__orbita {
+  position: absolute;
+  inset: -9px;
+  z-index: 1;
+  border-radius: 50%;
+  border: 1px solid oklch(0.86 0.14 205 / 0.55);
+  border-left-color: transparent;
+  border-bottom-color: oklch(0.86 0.14 205 / 0.15);
+  transform: rotateX(72deg) rotateZ(0deg);
+  animation: orbitar 9s linear infinite;
+}
+.balon__orbita--2 {
+  inset: -15px;
+  border-color: oklch(0.74 0.19 50 / 0.45);
+  border-right-color: transparent;
+  border-top-color: oklch(0.74 0.19 50 / 0.1);
+  transform: rotateX(72deg) rotateY(-18deg);
+  animation-duration: 14s;
+  animation-direction: reverse;
+}
+.balon__sombra {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -9px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, oklch(0.86 0.14 205 / 0.55), transparent);
+  filter: blur(2px);
+}
+@keyframes balanceo {
+  50% {
+    transform: translateY(-3px) rotate(-6deg);
+  }
+}
+@keyframes orbitar {
+  to {
+    transform: rotateX(72deg) rotateZ(360deg);
+  }
+}
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 991.98px) {
+  .balon {
+    width: 46px;
+    height: 46px;
+  }
+  .cabecera__marca {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .titulo {
+    letter-spacing: 0.1em;
+  }
+  .cabecera__sub {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+  }
+}

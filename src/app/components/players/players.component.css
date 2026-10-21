@@ -1,0 +1,375 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+/* Panel de la plantilla: en escritorio ocupa el alto de la pantalla y la lista se desplaza dentro */
+.plantilla {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--eb-cabecera) - 40px);
+}
+
+.panel-cab {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.panel-cab__codigo {
+  margin: 0;
+  color: var(--eb-cian);
+  font-size: 0.72rem;
+}
+.panel-cab__titulo {
+  margin: 0;
+  font-family: var(--eb-fuente-titulos);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.panel-cab__dato {
+  margin: 0 0 0 auto;
+  color: var(--eb-texto-3);
+  font-size: 0.72rem;
+}
+
+/* Filtros (Bootstrap: input-group, form-control y form-select con la paleta del proyecto) */
+.filtros {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+/* Rejilla de Bootstrap con 12 px de separación: dos desplegables por fila o uno en móvil */
+.filtros__fila {
+  --bs-gutter-x: 12px;
+  --bs-gutter-y: 12px;
+}
+.campo {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  align-content: start;
+}
+.campo__etq {
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--eb-texto-3);
+}
+.campo__caja {
+  border: 1px solid var(--eb-linea);
+  border-radius: var(--eb-radio-s);
+  background-color: rgb(5 10 20 / 0.6);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.campo__caja:focus-within,
+.form-select.campo__caja:focus {
+  border-color: var(--eb-cian);
+  box-shadow:
+    0 0 0 3px var(--eb-cian-tenue),
+    0 0 24px -6px var(--eb-cian);
+}
+.input-group.campo__caja {
+  flex-wrap: nowrap;
+}
+.campo__caja .input-group-text {
+  padding: 0 0 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--eb-texto-3);
+}
+.campo__caja .form-control,
+.form-select.campo__caja {
+  min-width: 0;
+  padding: 10px 12px;
+  background-color: transparent;
+  color: var(--eb-texto);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.campo__caja .form-control {
+  padding-left: 10px;
+  border: 0;
+  border-radius: 0 var(--eb-radio-s) var(--eb-radio-s) 0;
+  box-shadow: none;
+}
+.campo__caja .form-control::placeholder {
+  color: var(--eb-texto-3);
+}
+.form-select.campo__caja {
+  padding-right: 32px;
+  background-color: rgb(5 10 20 / 0.6);
+  /* Flecha del desplegable en el gris de las etiquetas (bi-chevron-down) */
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%236f8098' fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-size: 12px 12px;
+  cursor: pointer;
+}
+.form-select.campo__caja option {
+  background: var(--eb-fondo-1);
+}
+
+.filtros__pie {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 34px;
+  margin-bottom: 14px;
+}
+.boton-fantasma {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--eb-linea);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--eb-texto-2);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+.boton-fantasma:hover,
+.boton-fantasma:active {
+  color: var(--eb-texto);
+  border-color: var(--eb-linea-fuerte);
+  background: rgb(120 205 255 / 0.06);
+}
+.recuento {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--eb-cian);
+}
+
+/* Lista de jugadores */
+.lista {
+  margin: 0 -6px;
+  padding: 2px 6px 6px;
+  display: grid;
+  gap: 8px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--eb-linea-fuerte) transparent;
+  perspective: 900px;
+}
+.tarjeta {
+  --acento: var(--eb-cian);
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px 10px 12px;
+  border: 1px solid var(--eb-linea);
+  border-radius: var(--eb-radio-s);
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.025), transparent);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  /* Al volver el foco a una tarjeta (al cerrar la ficha), que no quede pegada al borde */
+  scroll-margin-block: 1rem;
+  transition:
+    transform 0.35s var(--eb-suave),
+    border-color 0.25s,
+    background 0.25s,
+    box-shadow 0.35s;
+}
+.tarjeta::before {
+  /* barra lateral de energía */
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--acento);
+  opacity: 0;
+  transition:
+    opacity 0.25s,
+    box-shadow 0.25s;
+}
+.tarjeta::after {
+  /* destello que recorre la tarjeta al pasar el ratón */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgb(255 255 255 / 0.07) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s var(--eb-suave);
+  pointer-events: none;
+}
+.tarjeta:hover {
+  border-color: var(--eb-linea-fuerte);
+  transform: translateZ(14px) translateX(3px);
+  background: linear-gradient(90deg, rgb(120 205 255 / 0.08), transparent 70%);
+}
+.tarjeta:hover::after {
+  transform: translateX(120%);
+}
+.tarjeta:hover::before {
+  opacity: 0.6;
+}
+/* Estilo del jugador seleccionado: tinte, barra y dorsal en naranja */
+.tarjeta.seleccionada {
+  --acento: var(--eb-naranja);
+  border-color: oklch(0.74 0.19 50 / 0.55);
+  background: linear-gradient(90deg, var(--eb-naranja-tenue), rgb(255 122 26 / 0.02) 75%);
+  box-shadow:
+    0 0 0 1px oklch(0.74 0.19 50 / 0.2),
+    0 12px 30px -14px oklch(0.74 0.19 50 / 0.65);
+  transform: translateZ(22px) translateX(4px);
+}
+.tarjeta.seleccionada::before {
+  opacity: 1;
+  box-shadow: 0 0 12px var(--eb-naranja);
+}
+.tarjeta:focus-visible {
+  outline-offset: -2px;
+}
+
+.avatar {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(
+    from 210deg,
+    var(--acento),
+    transparent 40%,
+    var(--acento) 75%,
+    transparent
+  );
+  flex-shrink: 0;
+}
+.avatar img,
+.avatar__iniciales {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  background: var(--eb-fondo-2);
+}
+.avatar__iniciales {
+  display: grid;
+  place-items: center;
+  font-family: var(--eb-fuente-titulos);
+  color: var(--eb-texto-2);
+}
+.tarjeta__datos {
+  min-width: 0;
+}
+.tarjeta__nombre {
+  display: block;
+  font-family: var(--eb-fuente-titulos);
+  font-weight: 600;
+  font-size: 1.02rem;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.tarjeta__meta {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--eb-texto-3);
+}
+.tarjeta__meta b {
+  color: var(--eb-texto-2);
+  font-weight: 500;
+}
+.sin-corte {
+  white-space: nowrap;
+}
+.tarjeta__dorsal {
+  font-family: var(--eb-fuente-titulos);
+  font-weight: 700;
+  font-size: 1.55rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--eb-texto-3);
+  transition:
+    color 0.25s,
+    -webkit-text-stroke-color 0.25s;
+}
+.tarjeta:hover .tarjeta__dorsal {
+  -webkit-text-stroke-color: var(--eb-cian);
+}
+.tarjeta.seleccionada .tarjeta__dorsal {
+  color: var(--eb-naranja);
+  -webkit-text-stroke-color: var(--eb-naranja);
+  text-shadow: 0 0 18px oklch(0.74 0.19 50 / 0.6);
+}
+
+.sin-resultados {
+  margin: 4px 0 0;
+  padding: 18px;
+  border: 1px dashed var(--eb-linea-fuerte);
+  border-radius: var(--eb-radio-s);
+  color: var(--eb-texto-2);
+  font-size: 0.88rem;
+  text-align: center;
+}
+.sin-resultados i {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.6rem;
+  color: var(--eb-cian);
+}
+
+.creditos {
+  margin: 12px 0 0;
+  font-size: 0.75rem;
+}
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--eb-texto-3);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.enlace:hover {
+  color: var(--eb-cian);
+}
+
+/* Tableta y móvil: el panel crece con la lista y la página se desplaza entera */
+@media (max-width: 991.98px) {
+  .plantilla {
+    max-height: none;
+  }
+  .lista {
+    overflow: visible;
+  }
+}

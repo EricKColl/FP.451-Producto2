@@ -1,0 +1,107 @@
+<header class="cabecera">
+  <div class="cabecera__marca">
+    <!-- Balón 3D vectorial: volumen, grano de cuero, costuras que giran, brillo y anillos holográficos -->
+    <div class="balon" aria-hidden="true">
+      <span class="balon__orbita balon__orbita--1"></span>
+      <span class="balon__orbita balon__orbita--2"></span>
+      <svg class="balon__svg" viewBox="-50 -50 100 100">
+        <defs>
+          <radialGradient id="b-cuerpo" cx="36%" cy="30%" r="78%">
+            <stop offset="0" stop-color="#ffc184" />
+            <stop offset=".22" stop-color="#ff8a2e" />
+            <stop offset=".55" stop-color="#e5600f" />
+            <stop offset=".82" stop-color="#9a3707" />
+            <stop offset="1" stop-color="#3a1402" />
+          </radialGradient>
+          <radialGradient id="b-sombra" cx="40%" cy="34%" r="70%">
+            <stop offset=".55" stop-color="#000" stop-opacity="0" />
+            <stop offset="1" stop-color="#05080f" stop-opacity=".6" />
+          </radialGradient>
+          <radialGradient id="b-brillo" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="#fff" stop-opacity=".9" />
+            <stop offset=".45" stop-color="#ffe2c4" stop-opacity=".35" />
+            <stop offset="1" stop-color="#fff" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="b-contraluz" x1="0" y1="0" x2="1" y2="1">
+            <stop offset=".55" stop-color="#3fe3ff" stop-opacity="0" />
+            <stop offset="1" stop-color="#7ff0ff" stop-opacity=".9" />
+          </linearGradient>
+          <radialGradient id="b-reflejo" cx="78%" cy="80%" r="45%">
+            <stop offset="0" stop-color="#3fe3ff" stop-opacity=".28" />
+            <stop offset="1" stop-color="#3fe3ff" stop-opacity="0" />
+          </radialGradient>
+          <filter id="b-grano" x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="1.6"
+              numOctaves="2"
+              seed="7"
+              result="ruido"
+            />
+            <feColorMatrix
+              in="ruido"
+              type="matrix"
+              values="0 0 0 0 .15  0 0 0 0 .05  0 0 0 0 0  0 0 0 -2.2 1.35"
+            />
+          </filter>
+          <clipPath id="b-esfera"><circle r="46" /></clipPath>
+        </defs>
+        <circle r="46" fill="url(#b-cuerpo)" />
+        <g clip-path="url(#b-esfera)">
+          <rect x="-50" y="-50" width="100" height="100" filter="url(#b-grano)" opacity=".55" />
+          <g
+            class="balon__costuras"
+            fill="none"
+            stroke="#2a0e02"
+            stroke-width="2.3"
+            stroke-linecap="round"
+          >
+            <path d="M-46 0 C-25 7 25 7 46 0" />
+            <path d="M0 -46 C9 -25 9 25 0 46" />
+            <path d="M-33 -32 C-15 -16 -15 16 -33 32" />
+            <path d="M33 -32 C15 -16 15 16 33 32" />
+          </g>
+          <g
+            class="balon__costuras"
+            fill="none"
+            stroke="#ffb27a"
+            stroke-opacity=".22"
+            stroke-width=".7"
+            transform="translate(-.6 -.8)"
+          >
+            <path d="M-46 0 C-25 7 25 7 46 0" />
+            <path d="M0 -46 C9 -25 9 25 0 46" />
+            <path d="M-33 -32 C-15 -16 -15 16 -33 32" />
+            <path d="M33 -32 C15 -16 15 16 33 32" />
+          </g>
+        </g>
+        <circle r="46" fill="url(#b-sombra)" />
+        <circle r="46" fill="url(#b-reflejo)" />
+        <circle r="44.8" fill="none" stroke="url(#b-contraluz)" stroke-width="2.4" />
+        <ellipse
+          cx="-15"
+          cy="-19"
+          rx="16"
+          ry="11"
+          fill="url(#b-brillo)"
+          transform="rotate(-28 -15 -19)"
+        />
+        <circle r="45.6" fill="none" stroke="#ffd9b8" stroke-opacity=".25" stroke-width=".8" />
+      </svg>
+      <span class="balon__sombra"></span>
+    </div>
+
+    <div class="cabecera__textos">
+      <!-- El nombre del equipo llega por @Input; la última palabra va en cian -->
+      <h1 class="titulo">
+        <!-- El espacio va dentro del primer span: Angular elimina los espacios sueltos entre etiquetas -->
+        <span class="titulo__a">{{ primeraParte }} </span
+        ><span class="titulo__b">{{ ultimaPalabra }}</span>
+      </h1>
+      <p class="cabecera__sub">
+        Selección histórica de la NBA <span class="cabecera__punto" aria-hidden="true"></span>
+        {{ totalJugadores }} jugadores
+      </p>
+    </div>
+  </div>
+</header>

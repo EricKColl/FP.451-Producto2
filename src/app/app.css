@@ -1,0 +1,271 @@
+/* ---------- Ambiente (fijo, detrás de todo) ---------- */
+.ambiente {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 70% -10%, #13284a 0%, transparent 55%),
+    radial-gradient(90% 70% at -10% 110%, #0e1c36 0%, transparent 60%), var(--eb-fondo-0);
+  perspective: 900px;
+}
+.ambiente__halo {
+  position: absolute;
+  width: 46vmax;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+}
+.ambiente__halo--cian {
+  top: -18vmax;
+  right: -10vmax;
+  background: oklch(0.62 0.17 230);
+  animation: flotar 18s ease-in-out infinite alternate;
+}
+.ambiente__halo--naranja {
+  bottom: -26vmax;
+  left: 20vw;
+  background: oklch(0.6 0.19 45);
+  opacity: 0.16;
+  animation: flotar 22s ease-in-out infinite alternate-reverse;
+}
+/* Suelo de pista en perspectiva: la "cancha" holográfica */
+.ambiente__pista {
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: -38%;
+  height: 90%;
+  transform: rotateX(74deg);
+  transform-origin: 50% 100%;
+  background-image:
+    linear-gradient(var(--eb-linea) 1px, transparent 1px),
+    linear-gradient(90deg, var(--eb-linea) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to top, #000 0%, transparent 70%);
+  animation: avanzar 14s linear infinite;
+}
+.ambiente__grano {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+@keyframes flotar {
+  to {
+    transform: translate3d(-4vmax, 3vmax, 0) scale(1.08);
+  }
+}
+@keyframes avanzar {
+  to {
+    background-position: 0 64px;
+  }
+}
+
+/* ---------- Distribución (rejilla de Bootstrap) ---------- */
+.escena {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: clamp(16px, 2.2vw, 28px) clamp(16px, 3vw, 40px);
+}
+.escena > .row {
+  --bs-gutter-x: clamp(16px, 2vw, 28px);
+  --bs-gutter-y: clamp(16px, 2vw, 28px);
+}
+
+@media (min-width: 992px) {
+  /* La plantilla tiene un ancho fijo y el escenario ocupa el resto; los dos se quedan a la vista */
+  .columna-plantilla {
+    width: calc(420px + var(--bs-gutter-x));
+  }
+  .columna-plantilla,
+  .columna-escenario {
+    position: sticky;
+    top: calc(var(--eb-cabecera) + 20px);
+  }
+}
+
+/* ---------- Zonas 2 y 3 · Escenario holográfico ---------- */
+.escenario {
+  position: relative;
+  height: calc(100vh - var(--eb-cabecera) - 40px);
+  min-height: 600px;
+  border-radius: calc(var(--eb-radio) + 4px);
+  border: 1px solid var(--eb-linea);
+  overflow: hidden;
+  isolation: isolate;
+  background: radial-gradient(80% 70% at 30% 30%, #102542 0%, #070d19 70%);
+  perspective: 1400px;
+  container-type: size;
+}
+/* Líneas de escaneo sobre todo el escenario */
+.escenario::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgb(255 255 255 / 0.022) 0 1px, transparent 1px 4px);
+}
+
+/* Estado vacío: proyector en reposo */
+.holo-suelo {
+  position: absolute;
+  left: -30%;
+  right: -30%;
+  bottom: -30%;
+  height: 70%;
+  z-index: 1;
+  transform: rotateX(76deg);
+  transform-origin: 50% 100%;
+  background-image:
+    linear-gradient(oklch(0.86 0.14 205 / 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.86 0.14 205 / 0.16) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to top, #000, transparent 75%);
+  animation: avanzar-suelo 10s linear infinite;
+  pointer-events: none;
+}
+@keyframes avanzar-suelo {
+  to {
+    background-position: 0 56px;
+  }
+}
+.reposo {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  padding: 32px;
+  text-align: center;
+}
+.esfera {
+  width: 190px;
+  height: 190px;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: rotar3d 16s linear infinite;
+}
+.esfera span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid oklch(0.86 0.14 205 / 0.4);
+}
+.esfera span:nth-child(1) {
+  transform: rotateY(0deg);
+}
+.esfera span:nth-child(2) {
+  transform: rotateY(45deg);
+}
+.esfera span:nth-child(3) {
+  transform: rotateY(90deg);
+  border-color: oklch(0.74 0.19 50 / 0.55);
+}
+.esfera span:nth-child(4) {
+  transform: rotateY(135deg);
+}
+.esfera span:nth-child(5) {
+  transform: rotateX(90deg);
+  border-color: oklch(0.74 0.19 50 / 0.55);
+}
+.esfera span:nth-child(6) {
+  transform: rotateX(90deg) scale(0.7) translateZ(40px);
+}
+.esfera span:nth-child(7) {
+  transform: rotateX(90deg) scale(0.7) translateZ(-40px);
+}
+@keyframes rotar3d {
+  from {
+    transform: rotateX(-18deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-18deg) rotateY(360deg);
+  }
+}
+.reposo__haz {
+  width: 220px;
+  height: 26px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, oklch(0.86 0.14 205 / 0.5), transparent);
+  filter: blur(3px);
+}
+.reposo__titulo {
+  margin: 6px 0 0;
+  font-family: var(--eb-fuente-titulos);
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: 0.06em;
+}
+.reposo__texto {
+  margin: 0;
+  max-width: 420px;
+  color: var(--eb-texto-2);
+}
+.reposo__pista {
+  margin: 4px 0 0;
+  font-size: 0.72rem;
+  color: var(--eb-texto-3);
+}
+
+/* ---------- Pie ---------- */
+.pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 14px;
+  padding: 14px 16px 30px;
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--eb-texto-3);
+}
+.pie__equipo {
+  color: var(--eb-cian);
+}
+.pie__app {
+  font-family: var(--eb-fuente-titulos);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--eb-texto-2);
+}
+.pie__sep {
+  width: 4px;
+  height: 4px;
+  background: var(--eb-naranja);
+  transform: rotate(45deg);
+}
+
+/* ---------- Tableta y móvil: el escenario se convierte en una hoja a pantalla completa ---------- */
+@media (max-width: 991.98px) {
+  .columna-escenario {
+    margin-top: 0;
+    padding: 0;
+  }
+  .escenario {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    height: auto;
+    min-height: 0;
+    border-radius: 0;
+    border: 0;
+    transform: translateY(100%);
+    visibility: hidden;
+    transition:
+      transform 0.55s var(--eb-camara),
+      visibility 0s linear 0.55s;
+  }
+  .escenario[data-estado='activo'] {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.55s var(--eb-camara);
+  }
+}

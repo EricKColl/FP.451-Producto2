@@ -1,0 +1,118 @@
+.dialogo {
+  width: min(980px, calc(100vw - 32px));
+  max-height: min(86vh, 900px);
+  padding: 22px 24px;
+  color: var(--eb-texto);
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--eb-linea-fuerte) transparent;
+  background-color: var(--eb-vidrio-fuerte);
+}
+.dialogo::backdrop {
+  background: rgb(3 6 12 / 0.72);
+  backdrop-filter: blur(6px);
+}
+.dialogo[open] {
+  animation: abrir-dialogo 0.45s var(--eb-suave);
+}
+@keyframes abrir-dialogo {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+
+.dialogo__cab {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.dialogo__codigo {
+  margin: 0;
+  color: var(--eb-cian);
+  font-size: 0.72rem;
+}
+.dialogo__titulo {
+  margin: 4px 0 0;
+  font-family: var(--eb-fuente-titulos);
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+.dialogo__intro,
+.dialogo__nota {
+  margin: 12px 0;
+  color: var(--eb-texto-2);
+  font-size: 0.88rem;
+}
+.dialogo__nota {
+  color: var(--eb-texto-3);
+  font-size: 0.78rem;
+}
+
+.creditos-lista {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+.credito {
+  display: grid;
+  grid-template-columns: 44px 1.1fr 1.4fr 0.8fr 1.6fr;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 12px;
+  border: 1px solid var(--eb-linea);
+  border-radius: var(--eb-radio-s);
+  background: rgb(5 10 20 / 0.5);
+  font-size: 0.85rem;
+}
+.credito img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  box-shadow: 0 0 0 1px var(--eb-linea-fuerte);
+}
+.credito__jugador {
+  font-family: var(--eb-fuente-titulos);
+  font-weight: 600;
+}
+.credito__etq {
+  display: block;
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--eb-texto-3);
+}
+.credito a {
+  color: var(--eb-cian);
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+.credito__licencia a {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid oklch(0.86 0.14 205 / 0.4);
+  border-radius: 999px;
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.72rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 767.98px) {
+  .credito {
+    grid-template-columns: 44px 1fr;
+    gap: 4px 12px;
+  }
+  .credito img {
+    grid-row: span 4;
+    align-self: start;
+  }
+  .dialogo {
+    padding: 18px 16px;
+  }
+}

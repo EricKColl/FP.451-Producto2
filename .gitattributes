@@ -1,0 +1,8 @@
+# Mismo final de línea (LF) en Windows y Mac
+* text=auto eol=lf
+
+# Multimedia: no tocar
+*.jpg binary
+*.png binary
+*.ico binary
+*.mp4 binary

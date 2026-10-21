@@ -1,0 +1,47 @@
+<dialog
+  #dialogo
+  class="dialogo vidrio hud"
+  aria-labelledby="titulo-creditos"
+  (click)="alPulsar($event)"
+  (close)="alCerrar()"
+>
+  <header class="dialogo__cab">
+    <div>
+      <p class="dialogo__codigo mono">LICENCIAS · WIKIMEDIA COMMONS</p>
+      <h2 id="titulo-creditos" class="dialogo__titulo">Créditos de fotografías</h2>
+    </div>
+    <button type="button" class="boton-cerrar" aria-label="Cerrar créditos" (click)="cerrar()">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <p class="dialogo__intro">
+    Las fotografías proceden de Wikimedia Commons y conservan su licencia. Se usan las versiones
+    reducidas (500 px de ancho), sin recortar el archivo ni alterar las caras; ilustran a cada
+    jugador y no tienen por qué corresponder a la temporada indicada en sus datos.
+  </p>
+
+  <ul class="creditos-lista list-unstyled">
+    <li *ngFor="let fila of filas" class="credito">
+      <img [src]="fila.jugador.foto" alt="" width="40" height="40" loading="lazy" />
+      <span>
+        <span class="credito__etq">Jugador</span>
+        <span class="credito__jugador">{{ fila.jugador.nombre }} {{ fila.jugador.apellidos }}</span>
+      </span>
+      <span><span class="credito__etq">Autor</span>{{ autor(fila) }}</span>
+      <span class="credito__licencia">
+        <span class="credito__etq">Licencia</span>
+        <a [href]="fila.licenciaUrl" target="_blank" rel="noopener">{{ fila.licencia }}</a>
+      </span>
+      <span>
+        <span class="credito__etq">Origen</span>
+        <a [href]="fila.origen" target="_blank" rel="noopener">{{ fila.archivo }}</a>
+      </span>
+    </li>
+  </ul>
+
+  <p class="dialogo__nota">
+    Estas licencias se aplican a las imágenes, no al código de la aplicación. Las adaptaciones de
+    imágenes CC BY-SA deben conservar esa licencia o una compatible.
+  </p>
+</dialog>
