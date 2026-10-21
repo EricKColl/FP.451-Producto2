@@ -100,7 +100,11 @@
       </h1>
       <p class="cabecera__sub">
         Selección histórica de la NBA <span class="cabecera__punto" aria-hidden="true"></span>
-        {{ totalJugadores }} jugadores
+        {{
+          cargando
+            ? 'conectando…'
+            : totalJugadores + (totalJugadores === 1 ? ' jugador' : ' jugadores')
+        }}
       </p>
     </div>
   </div>

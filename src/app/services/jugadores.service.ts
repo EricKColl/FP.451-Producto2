@@ -28,10 +28,14 @@ export class JugadoresService {
     // onSnapshot devuelve la función que cancela la escucha: se ejecuta al cancelar la suscripción
     onSnapshot(
       query(this.coleccion, orderBy('creadoEn')),
-      (instantanea) =>
+      (instantanea) => {
+        // Sin conexión, Firestore responde primero con su caché local, que al arrancar está
+        // vacía: se ignora para no mostrar «plantilla vacía» mientras se conecta con el servidor
+        if (instantanea.metadata.fromCache && instantanea.empty) return;
         suscriptor.next(
           instantanea.docs.map((documento) => aJugador(documento.id, documento.data())),
-        ),
+        );
+      },
       (error) => suscriptor.error(error),
     ),
   ).pipe(shareReplay({ bufferSize: 1, refCount: true }));
