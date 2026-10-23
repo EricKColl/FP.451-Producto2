@@ -107,6 +107,11 @@
   color: var(--eb-rojo);
 }
 
+/* La confirmación usa los estilos globales de ventanas, con un ancho más pequeño. */
+.dialogo--confirmar {
+  width: min(480px, calc(100vw - 32px));
+}
+
 .tarjeta {
   --acento: var(--eb-cian);
   width: 100%;

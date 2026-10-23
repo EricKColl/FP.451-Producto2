@@ -114,6 +114,8 @@
           class="borrar"
           [attr.aria-label]="'Borrar a ' + jugador.nombre + ' ' + jugador.apellidos"
           title="Borrar jugador"
+          aria-haspopup="dialog"
+          (click)="pedirBorrado(jugador)"
         >
           <i class="bi bi-trash3" aria-hidden="true"></i>
         </button>
@@ -149,3 +151,28 @@
 </section>
 
 <app-creditos #creditos [jugadores]="jugadores"></app-creditos>
+
+<!-- Una sola ventana para todo el listado: su contenido cambia según la papelera pulsada. -->
+<dialog
+  #confirmacion
+  class="dialogo dialogo--confirmar vidrio hud"
+  aria-labelledby="titulo-borrar"
+  aria-describedby="texto-borrar"
+>
+  <p class="dialogo__codigo mono">BORRAR JUGADOR</p>
+  <h2 id="titulo-borrar" class="dialogo__titulo">
+    ¿Borrar a {{ jugadorABorrar?.nombre }} {{ jugadorABorrar?.apellidos }}?
+  </h2>
+  <p id="texto-borrar" class="dialogo__intro">
+    Se borrará de la base de datos y desaparecerá de la plantilla para todos. Esta acción no se
+    puede deshacer.
+  </p>
+  <div class="dialogo__pie">
+    <button type="button" class="boton-fantasma" autofocus (click)="cancelarBorrado()">
+      Cancelar
+    </button>
+    <button type="button" class="boton-peligro" disabled>
+      <i class="bi bi-trash3" aria-hidden="true"></i> Borrar
+    </button>
+  </div>
+</dialog>
