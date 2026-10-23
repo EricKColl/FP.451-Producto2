@@ -67,7 +67,7 @@
     </div>
 
     <ul id="lista" class="lista list-unstyled" aria-label="Jugadores de la plantilla">
-      <li *ngFor="let jugador of filtrados; trackBy: porId">
+      <li *ngFor="let jugador of filtrados; trackBy: porId" class="fila">
         <!-- Dentro de un <button> solo se permiten elementos en línea: por eso todo son <span> -->
         <button
           type="button"
@@ -107,6 +107,15 @@
           <span class="tarjeta__dorsal">
             <span class="visually-hidden">, dorsal </span>{{ jugador.dorsal }}
           </span>
+        </button>
+        <!-- Papelera: va al lado de la tarjeta porque un botón no puede ir dentro de otro -->
+        <button
+          type="button"
+          class="borrar"
+          [attr.aria-label]="'Borrar a ' + jugador.nombre + ' ' + jugador.apellidos"
+          title="Borrar jugador"
+        >
+          <i class="bi bi-trash3" aria-hidden="true"></i>
         </button>
       </li>
     </ul>

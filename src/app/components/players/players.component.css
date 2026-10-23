@@ -74,6 +74,39 @@
   scrollbar-color: var(--eb-linea-fuerte) transparent;
   perspective: 900px;
 }
+/* Cada <li class="fila"> contiene dos botones: tarjeta y papelera.
+   La tarjeta ocupa el espacio restante; la papelera tiene una columna de 44 px. */
+.fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: 6px;
+}
+
+/* Reutilizamos los colores y el borde redondeado que ya tiene la web. */
+.borrar {
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid var(--eb-linea);
+  border-radius: var(--eb-radio-s);
+  background: rgb(5 10 20 / 0.4);
+  color: var(--eb-texto-3);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+
+/* Al pasar el ratón, el rojo identifica la acción de borrar. */
+.borrar:hover {
+  border-color: var(--eb-rojo);
+  background: var(--eb-rojo-tenue);
+  color: var(--eb-rojo);
+}
+
 .tarjeta {
   --acento: var(--eb-cian);
   width: 100%;
