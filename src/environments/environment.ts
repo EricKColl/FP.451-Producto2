@@ -10,4 +10,11 @@ export const environment = {
     messagingSenderId: '428664606749',
     appId: '1:428664606749:web:c9cce3525bc3bf75aa36f4',
   },
+  // Servidor de archivos (Cloudinary, plan gratuito): nombre de la cuenta y preajuste de subida
+  // sin firma. Tampoco son secretos: solo permiten subir fotos y vídeos a la carpeta del equipo.
+  // Mientras nube sea 'PENDIENTE', subir() devuelve un error controlado (tarjeta P2.5).
+  cloudinary: {
+    nube: 'PENDIENTE',
+    preajuste: 'equipo-basket',
+  },
 };
