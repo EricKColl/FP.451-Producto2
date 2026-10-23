@@ -100,8 +100,9 @@
     background 0.2s;
 }
 
-/* Al pasar el ratón, el rojo identifica la acción de borrar. */
-.borrar:hover {
+/* Al pasar el ratón o llegar con el teclado, el rojo identifica la acción de borrar. */
+.borrar:hover,
+.borrar:focus-visible {
   border-color: var(--eb-rojo);
   background: var(--eb-rojo-tenue);
   color: var(--eb-rojo);
