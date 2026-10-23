@@ -1,8 +1,10 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   Output,
   ViewChild,
@@ -13,6 +15,8 @@ import { Jugador, POSICIONES } from '../../models/jugador.model';
 import { FiltroJugadoresPipe } from '../../pipes/filtro-jugadores-pipe';
 import { CreditosComponent } from '../creditos/creditos.component';
 import { NuevoJugadorComponent } from '../nuevo-jugador/nuevo-jugador.component';
+import { JugadoresService } from '../../services/jugadores.service';
+import { AvisosService } from '../../services/avisos.service';
 
 @Component({
   selector: 'app-players',
@@ -44,11 +48,18 @@ export class PlayersComponent {
   rangoEdad = '';
   fotosNoDisponibles = new Set<string>();
 
-  // Jugador al que corresponde la papelera pulsada; todavía no se borra nada.
+  // Jugador al que corresponde la papelera pulsada.
   jugadorABorrar: Jugador | null = null;
+  // Mientras Firebase responde, se bloquean los botones para evitar peticiones repetidas.
+  borrando = false;
 
   // Conecta esta propiedad con el <dialog #confirmacion> del HTML.
   @ViewChild('confirmacion', { static: true }) confirmacion!: ElementRef<HTMLDialogElement>;
+
+  // Angular nos proporciona los servicios compartidos que ya preparó Erick.
+  private readonly jugadoresService = inject(JugadoresService);
+  private readonly avisos = inject(AvisosService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // Firestore entrega objetos nuevos en cada cambio: con el id, Angular reutiliza las tarjetas
   // que ya existen y la lista no se redibuja entera (no pierde el desplazamiento ni el foco)
@@ -71,7 +82,35 @@ export class PlayersComponent {
   }
 
   cancelarBorrado(): void {
+    if (this.borrando) return;
     this.confirmacion.nativeElement.close();
+  }
+
+  // Escape cierra normalmente; solo se impide mientras Firebase procesa el borrado.
+  alCancelarConfirmacion(evento: Event): void {
+    if (this.borrando) evento.preventDefault();
+  }
+
+  async confirmarBorrado(): Promise<void> {
+    const jugador = this.jugadorABorrar;
+    if (!jugador || this.borrando) return;
+
+    const nombre = `${jugador.nombre} ${jugador.apellidos}`;
+    this.borrando = true;
+    try {
+      // Solo se borra en Firestore: la escucha existente actualizará el listado.
+      await this.jugadoresService.borrar(jugador.id);
+      this.confirmacion.nativeElement.close();
+      this.avisos.exito(`${nombre} se ha borrado de la plantilla.`);
+    } catch {
+      this.avisos.error(
+        `No se ha podido borrar a ${nombre}. Comprueba la conexión e inténtalo de nuevo.`,
+      );
+    } finally {
+      this.borrando = false;
+      // Pedimos a Angular que refleje el estado final tras la respuesta asíncrona.
+      this.cdr.markForCheck();
+    }
   }
 
   limpiarFiltros(): void {

@@ -158,6 +158,7 @@
   class="dialogo dialogo--confirmar vidrio hud"
   aria-labelledby="titulo-borrar"
   aria-describedby="texto-borrar"
+  (cancel)="alCancelarConfirmacion($event)"
 >
   <p class="dialogo__codigo mono">BORRAR JUGADOR</p>
   <h2 id="titulo-borrar" class="dialogo__titulo">
@@ -168,11 +169,18 @@
     puede deshacer.
   </p>
   <div class="dialogo__pie">
-    <button type="button" class="boton-fantasma" autofocus (click)="cancelarBorrado()">
+    <button
+      type="button"
+      class="boton-fantasma"
+      autofocus
+      [disabled]="borrando"
+      (click)="cancelarBorrado()"
+    >
       Cancelar
     </button>
-    <button type="button" class="boton-peligro" disabled>
-      <i class="bi bi-trash3" aria-hidden="true"></i> Borrar
+    <button type="button" class="boton-peligro" [disabled]="borrando" (click)="confirmarBorrado()">
+      <i class="bi bi-trash3" aria-hidden="true"></i>
+      {{ borrando ? 'Borrando…' : 'Borrar' }}
     </button>
   </div>
 </dialog>
