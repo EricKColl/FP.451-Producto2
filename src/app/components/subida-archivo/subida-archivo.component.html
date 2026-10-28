@@ -1,15 +1,22 @@
 <div class="subida" [class.subida--video]="tipo === 'video'">
   <div class="subida__vista">
-    <img *ngIf="url && tipo === 'foto'" [src]="url" alt="Foto actual del jugador" />
-    <video
-      *ngIf="url && tipo === 'video'"
+    <img
+      *ngIf="url && !vistaRota && tipo === 'foto'"
       [src]="url"
+      alt="Foto actual del jugador"
+      (error)="vistaRota = true"
+    />
+    <!-- [muted] como propiedad: el atributo muted no silencia un vídeo creado por Angular -->
+    <video
+      *ngIf="url && !vistaRota && tipo === 'video'"
+      [src]="url"
+      [muted]="true"
       controls
-      muted
       playsinline
       preload="metadata"
+      (error)="vistaRota = true"
     ></video>
-    <span *ngIf="!url" class="subida__vacia" aria-hidden="true">
+    <span *ngIf="!url || vistaRota" class="subida__vacia" aria-hidden="true">
       <i
         class="bi"
         [class.bi-person-bounding-box]="tipo === 'foto'"
@@ -47,7 +54,7 @@
       >
         <span [style.width.%]="progreso"></span>
       </div>
-      <p class="campo__ayuda mono">Subiendo... {{ progreso }} %</p>
+      <p class="campo__ayuda mono">Subiendo… {{ progreso }} %</p>
     </ng-container>
 
     <p *ngIf="error" class="campo__error" role="alert">

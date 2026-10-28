@@ -25,7 +25,14 @@ export class SubidaArchivoComponent {
   // ENTRADA: 'foto' o 'video'
   @Input({ required: true }) tipo!: TipoArchivo;
   // ENTRADA: dirección del archivo actual ('' si todavía no hay ninguno)
-  @Input() url = '';
+  @Input()
+  set url(valor: string) {
+    this.direccion = valor;
+    this.vistaRota = false; // con una dirección nueva se vuelve a intentar la vista previa
+  }
+  get url(): string {
+    return this.direccion;
+  }
   // ENTRADA: id del campo, para que la etiqueta del formulario apunte al botón de elegir
   @Input() idCampo = '';
   // SALIDA: dirección del archivo recién subido. Permite usar [(url)] en el formulario
@@ -38,6 +45,9 @@ export class SubidaArchivoComponent {
 
   progreso: number | null = null; // porcentaje subido; null = no se está subiendo nada
   error = '';
+  // true si la foto o el vídeo actual no se pueden cargar: en su lugar se ve el icono
+  vistaRota = false;
+  private direccion = '';
 
   get limite() {
     return LIMITES_ARCHIVO[this.tipo];
