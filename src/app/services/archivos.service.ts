@@ -33,7 +33,8 @@ export class ArchivosService {
       return `Formato no admitido. Elige un archivo ${limite.texto}.`;
     }
     if (archivo.size > limite.maxMB * 1024 * 1024) {
-      return `El archivo pesa ${(archivo.size / 1024 / 1024).toFixed(1)} MB. El máximo es ${limite.maxMB} MB.`;
+      const megas = (archivo.size / 1024 / 1024).toFixed(1).replace('.', ',');
+      return `El archivo pesa ${megas} MB. El máximo es ${limite.maxMB} MB.`;
     }
     return null;
   }
