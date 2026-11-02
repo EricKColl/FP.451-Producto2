@@ -5,7 +5,7 @@ import {
   inject,
   ChangeDetectorRef,
 } from '@angular/core';
-import { JugadoresService } from '../../services/jugadores.service';
+import { confirmadaATiempo, JugadoresService } from '../../services/jugadores.service';
 import { AvisosService } from '../../services/avisos.service';
 import { DatosJugador } from '../../models/jugador.model';
 import { FormularioJugadorComponent } from '../formulario-jugador/formulario-jugador.component';
@@ -39,10 +39,22 @@ export class NuevoJugadorComponent {
     this.errorGuardado = '';
     this.guardando = true;
     this.formulario.guardando = true;
+    const nombre = `${datos.nombre} ${datos.apellidos}`;
     try {
-      await this.jugadores.crear(datos);
-      this.avisos.exito('Jugador añadido correctamente a la plantilla.');
-      this.formulario.guardando = false;
+      const escritura = this.jugadores.crear(datos);
+      if (await confirmadaATiempo(escritura)) {
+        this.avisos.exito(`${nombre} se ha añadido a la plantilla.`);
+        this.mostrarEnLista(await escritura);
+      } else {
+        // Sin conexión: el jugador ya está en la lista de este navegador y Firestore lo enviará solo
+        this.avisos.error(
+          `Sin conexión: ${nombre} ya está en la lista y se guardará al volver la conexión. No cierres esta pestaña.`,
+        );
+        escritura.then(
+          () => this.avisos.exito(`${nombre} se ha añadido a la plantilla.`),
+          () => this.avisos.error(`No se ha podido guardar a ${nombre}. Vuelve a añadirlo.`),
+        );
+      }
       this.formulario.cerrar();
     } catch {
       this.errorGuardado =
@@ -53,5 +65,12 @@ export class NuevoJugadorComponent {
       this.formulario.guardando = false;
       this.cdr.markForCheck();
     }
+  }
+
+  // La plantilla puede ser larga: la lista se desplaza hasta el jugador recién añadido
+  private mostrarEnLista(id: string): void {
+    setTimeout(() =>
+      globalThis.document?.getElementById(`jugador-${id}`)?.scrollIntoView({ block: 'nearest' }),
+    );
   }
 }
