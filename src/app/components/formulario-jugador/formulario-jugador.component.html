@@ -1,18 +1,195 @@
-<dialog #dialogo class="dialogo vidrio hud" aria-labelledby="titulo-formulario">
+<dialog
+  #dialogo
+  class="dialogo vidrio hud"
+  [attr.aria-labelledby]="idFormulario + '-titulo'"
+  [attr.closedby]="ocupado ? 'none' : 'closerequest'"
+  (cancel)="cancelar($event)"
+>
   <header class="dialogo__cab">
     <div>
       <p class="dialogo__codigo mono">{{ jugador ? 'EDITAR FICHA' : 'ALTA EN LA PLANTILLA' }}</p>
-      <h2 id="titulo-formulario" class="dialogo__titulo">
+      <h2 [id]="idFormulario + '-titulo'" class="dialogo__titulo">
         {{ jugador ? 'Editar jugador' : 'Nuevo jugador' }}
       </h2>
     </div>
-    <button type="button" class="boton-cerrar" aria-label="Cerrar formulario" (click)="cerrar()">
+    <button
+      type="button"
+      class="boton-cerrar"
+      aria-label="Cerrar formulario"
+      [disabled]="ocupado"
+      (click)="pedirCierre()"
+    >
       <i class="bi bi-x-lg" aria-hidden="true"></i>
     </button>
   </header>
-
-  <!-- PERSONA 4: aquí va el formulario con todos los campos -->
-  <div class="dialogo__cuerpo">
-    <p class="dialogo__intro">Formulario en construcción (Persona 4).</p>
-  </div>
+  <form
+    [formGroup]="formulario"
+    (ngSubmit)="enviar()"
+    class="formulario"
+    [attr.aria-busy]="guardando"
+  >
+    <div class="dialogo__cuerpo">
+      <p class="dialogo__intro">
+        Completa los datos del jugador. Todos los campos son obligatorios salvo la fotografía y el
+        vídeo.
+      </p>
+      <fieldset [disabled]="enviando" class="rejilla">
+        <legend class="visually-hidden">Datos del jugador</legend>
+        @for (campo of campos; track campo.nombre) {
+          <div class="campo">
+            <label class="campo__etq" [for]="idFormulario + '-' + campo.nombre">{{
+              campo.etiqueta
+            }}</label>
+            <input
+              class="form-control campo__caja"
+              [id]="idFormulario + '-' + campo.nombre"
+              [formControlName]="campo.nombre"
+              [maxlength]="campo.max"
+              autocomplete="off"
+              required
+              [class.no-valido]="error(campo.nombre)"
+              [attr.aria-invalid]="!!error(campo.nombre)"
+              [attr.aria-describedby]="idFormulario + '-' + campo.nombre + '-error'"
+            />
+            <span class="campo__error" [id]="idFormulario + '-' + campo.nombre + '-error'">{{
+              error(campo.nombre)
+            }}</span>
+          </div>
+        }
+        <div class="campo">
+          <label class="campo__etq" [for]="idFormulario + '-posicion'">Posición</label>
+          <select
+            [id]="idFormulario + '-posicion'"
+            class="form-select campo__caja"
+            formControlName="posicion"
+            required
+            [class.no-valido]="error('posicion')"
+            [attr.aria-invalid]="!!error('posicion')"
+            [attr.aria-describedby]="idFormulario + '-posicion-error'"
+          >
+            <option value="" disabled>Selecciona una posición</option>
+            @for (posicion of posiciones; track posicion) {
+              <option [value]="posicion">{{ posicion }}</option>
+            }
+          </select>
+          <span [id]="idFormulario + '-posicion-error'" class="campo__error">{{
+            error('posicion')
+          }}</span>
+        </div>
+        @for (campo of numericos; track campo.nombre) {
+          <div class="campo">
+            <label class="campo__etq" [for]="idFormulario + '-' + campo.nombre">{{
+              campo.etiqueta
+            }}</label>
+            <input
+              type="number"
+              class="form-control campo__caja"
+              [id]="idFormulario + '-' + campo.nombre"
+              [formControlName]="campo.nombre"
+              [min]="campo.min"
+              [max]="campo.max"
+              [step]="campo.paso"
+              required
+              [class.no-valido]="error(campo.nombre)"
+              [attr.aria-invalid]="!!error(campo.nombre)"
+              [attr.aria-describedby]="idFormulario + '-' + campo.nombre + '-error'"
+            />
+            <span class="campo__ayuda"
+              >De {{ decimal(campo.min) }} a {{ decimal(campo.max) }}.</span
+            >
+            <span class="campo__error" [id]="idFormulario + '-' + campo.nombre + '-error'">{{
+              error(campo.nombre)
+            }}</span>
+          </div>
+        }
+        <div class="campo ancho">
+          <label class="campo__etq" [for]="idFormulario + '-descripcion'">Descripción</label>
+          <textarea
+            [id]="idFormulario + '-descripcion'"
+            class="form-control campo__caja"
+            formControlName="descripcion"
+            rows="3"
+            maxlength="600"
+            required
+            [class.no-valido]="error('descripcion')"
+            [attr.aria-invalid]="!!error('descripcion')"
+            [attr.aria-describedby]="idFormulario + '-descripcion-error'"
+          ></textarea>
+          <span class="campo__ayuda">
+            La ficha muestra aparte lo que va antes del primer punto. Por ejemplo: «Los Angeles
+            Lakers, temporada 1999-2000. Pívot dominante cerca del aro.»
+          </span>
+          <span [id]="idFormulario + '-descripcion-error'" class="campo__error">{{
+            error('descripcion')
+          }}</span>
+        </div>
+        <fieldset formGroupName="estadisticas" class="ancho rejilla estadisticas">
+          <legend class="campo__etq">Estadísticas medias por partido</legend>
+          @for (campo of estadisticas; track campo.nombre) {
+            <div class="campo">
+              <label class="campo__etq" [for]="idFormulario + '-' + campo.nombre">{{
+                campo.etiqueta
+              }}</label>
+              <input
+                type="number"
+                class="form-control campo__caja"
+                [id]="idFormulario + '-' + campo.nombre"
+                [formControlName]="campo.nombre"
+                min="0"
+                [max]="campo.max"
+                step="any"
+                required
+                [class.no-valido]="error('estadisticas.' + campo.nombre)"
+                [attr.aria-invalid]="!!error('estadisticas.' + campo.nombre)"
+                [attr.aria-describedby]="idFormulario + '-' + campo.nombre + '-error'"
+              />
+              <span class="campo__ayuda">De 0 a {{ campo.max }}.</span>
+              <span class="campo__error" [id]="idFormulario + '-' + campo.nombre + '-error'">{{
+                error('estadisticas.' + campo.nombre)
+              }}</span>
+            </div>
+          }
+        </fieldset>
+      </fieldset>
+      <fieldset [disabled]="guardando" class="archivos">
+        <legend class="campo__etq">Fotografía y vídeo (opcionales)</legend>
+        <label class="campo__etq" [for]="idFormulario + '-foto'">Fotografía</label>
+        <app-subida-archivo
+          tipo="foto"
+          [idCampo]="idFormulario + '-foto'"
+          [url]="formulario.controls.foto.value"
+          (urlChange)="formulario.controls.foto.setValue($event)"
+          (subiendo)="subiendoFoto = $event"
+        ></app-subida-archivo>
+        <p class="campo__error">{{ error('foto') }}</p>
+        <label class="campo__etq" [for]="idFormulario + '-video'">Vídeo</label>
+        <app-subida-archivo
+          tipo="video"
+          [idCampo]="idFormulario + '-video'"
+          [url]="formulario.controls.video.value"
+          (urlChange)="formulario.controls.video.setValue($event)"
+          (subiendo)="subiendoVideo = $event"
+        ></app-subida-archivo>
+        <p class="campo__error">{{ error('video') }}</p>
+      </fieldset>
+    </div>
+    <ng-content></ng-content>
+    <footer class="dialogo__pie">
+      <p role="status" class="dialogo__nota">
+        {{
+          guardando
+            ? 'Guardando jugador…'
+            : subiendoFoto || subiendoVideo
+              ? 'Espera a que terminen las subidas.'
+              : ''
+        }}
+      </p>
+      <button type="button" class="boton-fantasma" [disabled]="ocupado" (click)="pedirCierre()">
+        Cancelar
+      </button>
+      <button type="submit" class="boton-primario" [disabled]="ocupado">
+        {{ guardando ? 'Guardando…' : 'Guardar jugador' }}
+      </button>
+    </footer>
+  </form>
 </dialog>

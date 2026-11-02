@@ -57,6 +57,11 @@ export class SubidaArchivoComponent {
     return this.tipo === 'foto' ? 'foto' : 'vídeo';
   }
 
+  // Al reabrir el formulario no debe quedar el error de una subida anterior
+  limpiarError(): void {
+    this.error = '';
+  }
+
   async alElegirArchivo(evento: Event): Promise<void> {
     const selector = evento.target as HTMLInputElement;
     const archivo = selector.files?.[0];

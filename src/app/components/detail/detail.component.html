@@ -2,7 +2,7 @@
 <div class="holo-fondo" aria-hidden="true">
   <div
     class="holo-fondo__foto"
-    [style.background-image]="'url(' + jugador.foto + ')'"
+    [style.background-image]="jugador.foto && !fotoRota ? 'url(' + jugador.foto + ')' : 'none'"
     [style.--fx]="vistas[vista].fx"
     [style.--fy]="vistas[vista].fy"
     [style.--fs]="vistas[vista].fs"
@@ -68,11 +68,19 @@
             <div class="holograma__anillo holograma__anillo--2" aria-hidden="true"></div>
             <div class="holograma__foto">
               <img
+                *ngIf="jugador.foto && !fotoRota; else iniciales"
                 [src]="jugador.foto"
                 [alt]="'Foto de ' + jugador.nombre + ' ' + jugador.apellidos"
                 width="300"
                 height="300"
+                (error)="fotoRota = true"
               />
+              <!-- Sin foto: las iniciales, como en el listado -->
+              <ng-template #iniciales>
+                <span class="holograma__iniciales" aria-hidden="true">
+                  {{ jugador.nombre.charAt(0) }}{{ jugador.apellidos.charAt(0) }}
+                </span>
+              </ng-template>
             </div>
             <div class="holograma__proyector" aria-hidden="true"></div>
             <span class="holograma__dorsal">
@@ -122,7 +130,9 @@
           <h2 class="stats__titulo">
             {{ jugador.nombre }} <span>{{ jugador.apellidos }}</span>
           </h2>
-          <p class="stats__nota mono">TEMPORADA REGULAR {{ temporada }} · MEDIAS POR PARTIDO</p>
+          <p class="stats__nota mono">
+            {{ temporada ? 'TEMPORADA REGULAR ' + temporada + ' · ' : '' }}MEDIAS POR PARTIDO
+          </p>
         </div>
 
         <div class="anillos">
