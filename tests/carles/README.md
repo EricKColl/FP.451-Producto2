@@ -17,8 +17,9 @@ Las pruebas instancian los componentes y sus Reactive Forms reales, con un diál
 
 - `abrir(jugador)` copia los datos a los controles; `abrir(null)` reinicia el alta.
 - `(guardar)` emite solo `DatosJugador`, sin id ni fechas. El padre llama a `actualizar(jugador.id, datos)`.
-- El padre debe poner `guardando = true` al empezar y `false` al terminar, también ante errores. Tras el éxito, primero libera `guardando` y después llama a `cerrar()`.
-- El formulario bloquea guardar, cerrar y Escape mientras se guarda o se sube un archivo. Cada instancia tiene identificadores propios para etiquetas y errores.
+- El padre debe poner `guardando = true` al empezar y `false` al terminar, también ante errores. Tras el éxito llama a `cerrar()`, que cierra siempre.
+- Para no bloquear la ventana sin conexión, el padre espera con `confirmadaATiempo(escritura)`, de `jugadores.service.ts`, como hace `NuevoJugadorComponent`: `true` si el servidor ha confirmado y `false` si sigue pendiente y Firestore la enviará al volver la red.
+- Los botones de la ventana y Escape no la cierran mientras se guarda o se sube un archivo; durante una subida se pueden seguir rellenando los datos. Cada instancia tiene identificadores propios para etiquetas y errores.
 - Foto y vídeo son opcionales según las reglas actuales. Si no se sustituyen, se conservan sus URL. Las vistas previas, validación y subida las proporciona el componente existente de Marc.
 - Puede proyectarse un mensaje de error dentro del diálogo; el alta lo usa para que el fallo siga visible en la ventana modal.
 
