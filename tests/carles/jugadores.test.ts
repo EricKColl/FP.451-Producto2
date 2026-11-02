@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { ChangeDetectorRef, ElementRef, Injector, runInInjectionContext } from '@angular/core';
 import { FormularioJugadorComponent } from '../../src/app/components/formulario-jugador/formulario-jugador.component';
 import { NuevoJugadorComponent } from '../../src/app/components/nuevo-jugador/nuevo-jugador.component';
-import { JugadoresService } from '../../src/app/services/jugadores.service';
+import { confirmadaATiempo, JugadoresService } from '../../src/app/services/jugadores.service';
 import { AvisosService } from '../../src/app/services/avisos.service';
 import { SubidaArchivoComponent } from '../../src/app/components/subida-archivo/subida-archivo.component';
 import { ArchivosService } from '../../src/app/services/archivos.service';
@@ -174,7 +174,7 @@ test('bloquea envío y cierre durante cualquiera de las subidas o el guardado', 
   for (const estado of ['subiendoFoto', 'subiendoVideo', 'guardando'] as const) {
     f[estado] = true;
     f.enviar();
-    f.cerrar();
+    f.pedirCierre();
     assert.equal(emisiones, 0);
     assert.equal(f.dialogo.nativeElement.open, true);
     const evento = new Event('cancel', { cancelable: true });
@@ -495,3 +495,75 @@ for (const tipo of ['foto', 'video'] as const) {
     });
   }
 }
+
+test('cerrar() cierra siempre: el padre lo llama cuando ya ha guardado', () => {
+  const f = formulario();
+  f.formulario.setValue(datos());
+  f.enviar(); // queda bloqueado esperando al padre
+  assert.ok(f.ocupado);
+  f.pedirCierre();
+  assert.equal(f.dialogo.nativeElement.open, true);
+  f.cerrar();
+  assert.equal(f.dialogo.nativeElement.open, false);
+  assert.equal(f.ocupado, false);
+  f.abrir(null);
+  assert.equal(f.dialogo.nativeElement.open, true);
+});
+
+test('durante una subida se puede escribir, pero no guardar ni cerrar', () => {
+  const f = formulario();
+  f.subiendoFoto = true;
+  assert.equal(f.enviando, false);
+  assert.equal(f.ocupado, true);
+  f.guardando = true;
+  assert.equal(f.enviando, true);
+});
+
+test('los mensajes de rango usan coma decimal', () => {
+  const f = formulario();
+  const altura = f.formulario.controls.altura;
+  altura.setValue(1.4);
+  altura.markAsTouched();
+  assert.equal(f.error('altura'), 'El mínimo es 1,5.');
+  altura.setValue(2.5);
+  assert.equal(f.error('altura'), 'El máximo es 2,4.');
+});
+
+test('confirmadaATiempo distingue confirmada, rechazada y pendiente sin conexión', async () => {
+  assert.equal(await confirmadaATiempo(Promise.resolve('id')), true);
+  await assert.rejects(confirmadaATiempo(Promise.reject(new Error('denegado'))), /denegado/);
+  const original = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  Object.defineProperty(globalThis, 'navigator', { value: { onLine: false }, configurable: true });
+  try {
+    assert.equal(await confirmadaATiempo(new Promise(() => {})), false);
+  } finally {
+    if (original) Object.defineProperty(globalThis, 'navigator', original);
+  }
+});
+
+test('sin conexión el alta cierra la ventana, avisa y confirma al volver la red', async () => {
+  let confirmar: (id: string) => void = () => {};
+  const prueba = alta(() => new Promise<string>((resolver) => (confirmar = resolver)));
+  const original = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  Object.defineProperty(globalThis, 'navigator', { value: { onLine: false }, configurable: true });
+  try {
+    const c = prueba.componente;
+    c.formulario.formulario.setValue(datos());
+    c.formulario.guardar.subscribe((d) => {
+      void c.crearJugador(d);
+    });
+    c.formulario.enviar();
+    await new Promise((r) => setTimeout(r, 5));
+    assert.equal(c.formulario.dialogo.nativeElement.open, false);
+    assert.equal(c.guardando, false);
+    assert.equal(c.formulario.ocupado, false);
+    assert.match(prueba.errores[0], /Sin conexión/);
+    assert.equal(prueba.exitos.length, 0);
+    confirmar('nuevo-id');
+    await new Promise((r) => setImmediate(r));
+    assert.match(prueba.exitos[0], /Carles Miguel se ha añadido/);
+  } finally {
+    if (original) Object.defineProperty(globalThis, 'navigator', original);
+    prueba.injector.destroy();
+  }
+});

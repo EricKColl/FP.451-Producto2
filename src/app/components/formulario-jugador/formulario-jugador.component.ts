@@ -5,7 +5,9 @@ import {
   EventEmitter,
   Input,
   Output,
+  QueryList,
   ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -22,6 +24,9 @@ import { SubidaArchivoComponent } from '../subida-archivo/subida-archivo.compone
 import { referenciaMultimedia } from './validadores/referencia-multimedia.validator';
 
 let siguienteFormulario = 0;
+
+// Cifras con coma decimal, como en el resto de la aplicación
+const decimal = (valor: number) => String(valor).replace('.', ',');
 
 const texto = (maximo: number) => [
   Validators.required,
@@ -63,6 +68,8 @@ export class FormularioJugadorComponent {
   }
   @Output() guardar = new EventEmitter<DatosJugador>();
   @ViewChild('dialogo', { static: true }) dialogo!: ElementRef<HTMLDialogElement>;
+  @ViewChildren(SubidaArchivoComponent) subidas?: QueryList<SubidaArchivoComponent>;
+  readonly decimal = decimal;
   readonly idFormulario = `formulario-jugador-${++siguienteFormulario}`;
   jugador: Jugador | null = null;
   readonly posiciones = POSICIONES;
@@ -115,13 +122,20 @@ export class FormularioJugadorComponent {
     }),
   });
 
+  // Guardando en Firestore: los datos no se pueden tocar
+  get enviando(): boolean {
+    return this.guardando || this.enviado;
+  }
+
+  // Además, subiendo un archivo: se puede seguir escribiendo, pero no guardar ni cerrar
   get ocupado(): boolean {
-    return this.guardando || this.enviado || this.subiendoFoto || this.subiendoVideo;
+    return this.enviando || this.subiendoFoto || this.subiendoVideo;
   }
 
   abrir(jugador: Jugador | null): void {
     if (this.ocupado) return;
     this.jugador = jugador;
+    this.subidas?.forEach((subida) => subida.limpiarError());
     this.formulario.reset();
     if (jugador) {
       // setValue copia los valores en los controles, sin enlazar el objeto original.
@@ -129,10 +143,22 @@ export class FormularioJugadorComponent {
       this.formulario.setValue(datos);
     }
     if (!this.dialogo.nativeElement.open) this.dialogo.nativeElement.showModal();
+    this.enfocar('.dialogo__cuerpo input');
   }
 
+  // Lo llama el padre cuando ya ha guardado: la ventana se cierra siempre
   cerrar(): void {
-    if (!this.ocupado) this.dialogo.nativeElement.close();
+    this.enviado = false;
+    this.dialogo.nativeElement.close();
+  }
+
+  // Botones de cerrar y cancelar: no hacen nada mientras se guarda o se sube un archivo
+  pedirCierre(): void {
+    if (!this.ocupado) this.cerrar();
+  }
+
+  private enfocar(selector: string): void {
+    setTimeout(() => this.dialogo.nativeElement.querySelector?.<HTMLElement>(selector)?.focus());
   }
 
   cancelar(evento: Event): void {
@@ -148,17 +174,21 @@ export class FormularioJugadorComponent {
       return `Máximo ${campo.errors['maxlength'].requiredLength} caracteres.`;
     if (campo.hasError('referenciaMultimedia'))
       return 'Referencia no válida. Usa una URL HTTPS completa o una ruta de archivos del proyecto compatible con este campo.';
-    if (campo.hasError('numero')) return 'Introduce un número finito válido.';
+    if (campo.hasError('numero')) return 'Introduce un número válido.';
     if (campo.hasError('entero')) return 'Introduce un número entero.';
-    if (campo.hasError('min')) return `El mínimo es ${campo.errors['min'].min}.`;
-    if (campo.hasError('max')) return `El máximo es ${campo.errors['max'].max}.`;
+    if (campo.hasError('min')) return `El mínimo es ${decimal(campo.errors['min'].min)}.`;
+    if (campo.hasError('max')) return `El máximo es ${decimal(campo.errors['max'].max)}.`;
     return 'Selecciona una posición válida.';
   }
 
   enviar(): void {
     if (this.ocupado) return;
     this.formulario.markAllAsTouched();
-    if (this.formulario.invalid) return;
+    if (this.formulario.invalid) {
+      // El foco va al primer campo con error: puede estar fuera de la zona visible
+      this.enfocar('[aria-invalid="true"]');
+      return;
+    }
     const valor = this.formulario.getRawValue();
     const datos: DatosJugador = {
       ...valor,

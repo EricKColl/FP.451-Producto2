@@ -2,6 +2,7 @@
   #dialogo
   class="dialogo vidrio hud"
   [attr.aria-labelledby]="idFormulario + '-titulo'"
+  [attr.closedby]="ocupado ? 'none' : 'closerequest'"
   (cancel)="cancelar($event)"
 >
   <header class="dialogo__cab">
@@ -16,7 +17,7 @@
       class="boton-cerrar"
       aria-label="Cerrar formulario"
       [disabled]="ocupado"
-      (click)="cerrar()"
+      (click)="pedirCierre()"
     >
       <i class="bi bi-x-lg" aria-hidden="true"></i>
     </button>
@@ -32,7 +33,7 @@
         Completa los datos del jugador. Todos los campos son obligatorios salvo la fotografía y el
         vídeo.
       </p>
-      <fieldset [disabled]="ocupado" class="rejilla">
+      <fieldset [disabled]="enviando" class="rejilla">
         <legend class="visually-hidden">Datos del jugador</legend>
         @for (campo of campos; track campo.nombre) {
           <div class="campo">
@@ -44,6 +45,7 @@
               [id]="idFormulario + '-' + campo.nombre"
               [formControlName]="campo.nombre"
               [maxlength]="campo.max"
+              autocomplete="off"
               required
               [class.no-valido]="error(campo.nombre)"
               [attr.aria-invalid]="!!error(campo.nombre)"
@@ -61,6 +63,7 @@
             class="form-select campo__caja"
             formControlName="posicion"
             required
+            [class.no-valido]="error('posicion')"
             [attr.aria-invalid]="!!error('posicion')"
             [attr.aria-describedby]="idFormulario + '-posicion-error'"
           >
@@ -91,7 +94,9 @@
               [attr.aria-invalid]="!!error(campo.nombre)"
               [attr.aria-describedby]="idFormulario + '-' + campo.nombre + '-error'"
             />
-            <span class="campo__ayuda">De {{ campo.min }} a {{ campo.max }}.</span>
+            <span class="campo__ayuda"
+              >De {{ decimal(campo.min) }} a {{ decimal(campo.max) }}.</span
+            >
             <span class="campo__error" [id]="idFormulario + '-' + campo.nombre + '-error'">{{
               error(campo.nombre)
             }}</span>
@@ -106,9 +111,14 @@
             rows="3"
             maxlength="600"
             required
+            [class.no-valido]="error('descripcion')"
             [attr.aria-invalid]="!!error('descripcion')"
             [attr.aria-describedby]="idFormulario + '-descripcion-error'"
           ></textarea>
+          <span class="campo__ayuda">
+            La ficha muestra aparte lo que va antes del primer punto. Por ejemplo: «Los Angeles
+            Lakers, temporada 1999-2000. Pívot dominante cerca del aro.»
+          </span>
           <span [id]="idFormulario + '-descripcion-error'" class="campo__error">{{
             error('descripcion')
           }}</span>
@@ -129,6 +139,7 @@
                 [max]="campo.max"
                 step="any"
                 required
+                [class.no-valido]="error('estadisticas.' + campo.nombre)"
                 [attr.aria-invalid]="!!error('estadisticas.' + campo.nombre)"
                 [attr.aria-describedby]="idFormulario + '-' + campo.nombre + '-error'"
               />
@@ -173,7 +184,7 @@
               : ''
         }}
       </p>
-      <button type="button" class="boton-fantasma" [disabled]="ocupado" (click)="cerrar()">
+      <button type="button" class="boton-fantasma" [disabled]="ocupado" (click)="pedirCierre()">
         Cancelar
       </button>
       <button type="submit" class="boton-primario" [disabled]="ocupado">
