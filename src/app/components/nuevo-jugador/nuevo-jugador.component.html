@@ -1,5 +1,9 @@
-<button type="button" class="boton-fantasma" (click)="abrirFormulario()">
+<button type="button" class="boton-fantasma" [disabled]="guardando" (click)="abrirFormulario()">
   <i class="bi bi-person-plus" aria-hidden="true"></i> Nuevo
 </button>
 
-<app-formulario-jugador (guardar)="crearJugador($event)"></app-formulario-jugador>
+<app-formulario-jugador [guardando]="guardando" (guardar)="crearJugador($event)">
+  @if (errorGuardado) {
+    <p class="campo__error" role="alert">{{ errorGuardado }}</p>
+  }
+</app-formulario-jugador>

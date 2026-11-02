@@ -154,6 +154,7 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
   equipo = '';
   resumen = '';
   temporada = '';
+  fotoRota = false; // la foto no se puede cargar: se muestran las iniciales
   credito: Credito | undefined;
   creditoVideo: CreditoVideo | undefined;
   anillos: Anillo[] = [];
@@ -172,13 +173,14 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
   ngOnChanges(cambios: SimpleChanges): void {
     const j = this.jugador;
     const otroJugador = cambios['jugador'] && cambios['jugador'].previousValue?.id !== j.id;
+    if (cambios['jugador']?.previousValue?.foto !== j.foto) this.fotoRota = false;
     const ref = calcularReferencias(this.plantilla.length ? this.plantilla : [j]);
     this.datos = [
       { etiqueta: 'Nombre', valor: j.nombre },
       { etiqueta: 'Apellidos', valor: j.apellidos },
       { etiqueta: 'Edad', valor: `${j.edad} años` },
       { etiqueta: 'Altura', valor: `${this.numero(j.altura, '1.2-2')} m` },
-      { etiqueta: 'Peso', valor: `${j.peso} kg` },
+      { etiqueta: 'Peso', valor: `${this.numero(j.peso, '1.0-1')} kg` },
       { etiqueta: 'Nacionalidad', valor: j.nacionalidad },
     ];
     // "Golden State Warriors, temporada 2015-16. Base especialista…" → equipo + resumen
@@ -226,7 +228,7 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
       },
       {
         etiqueta: 'Peso',
-        texto: `${j.peso} kg`,
+        texto: `${this.numero(j.peso, '1.0-1')} kg`,
         fraccion: (j.peso - ref.peso.min + 5) / (ref.peso.max - ref.peso.min + 5),
         media: null,
       },

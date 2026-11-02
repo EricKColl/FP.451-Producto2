@@ -15,6 +15,27 @@ import { Observable, shareReplay } from 'rxjs';
 import { FIRESTORE } from '../firebase';
 import { DatosJugador, Jugador, Posicion } from '../models/jugador.model';
 
+// Tiempo máximo que una ventana espera la confirmación del servidor antes de cerrarse.
+const ESPERA_CONFIRMACION_MS = 8000;
+
+// Firestore aplica cada escritura al momento en este navegador, pero su promesa no termina hasta
+// que responde el servidor: sin conexión, hasta que vuelva la red. Una ventana que espere esa
+// promesa se quedaría bloqueada, así que la espera tiene un límite.
+// true: el servidor la ha confirmado. false: sigue pendiente y Firestore la enviará sola al volver
+// la conexión. Si el servidor la rechaza dentro del límite, se lanza su error.
+export async function confirmadaATiempo(escritura: Promise<unknown>): Promise<boolean> {
+  let temporizador: ReturnType<typeof setTimeout> | undefined;
+  const limite = new Promise<boolean>((resolver) => {
+    const espera = navigator.onLine === false ? 0 : ESPERA_CONFIRMACION_MS;
+    temporizador = setTimeout(() => resolver(false), espera);
+  });
+  try {
+    return await Promise.race([escritura.then(() => true), limite]);
+  } finally {
+    clearTimeout(temporizador);
+  }
+}
+
 // Acceso a la colección «jugadores» de Cloud Firestore.
 // Toda la aplicación lee y escribe la plantilla a través de este servicio.
 @Injectable({ providedIn: 'root' })
