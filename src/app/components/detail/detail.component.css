@@ -243,6 +243,17 @@
   object-position: center top;
   display: block;
 }
+.holograma__iniciales {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background: rgb(5 10 20 / 0.75);
+  color: var(--eb-cian);
+  font-family: var(--eb-fuente-titulos);
+  font-size: clamp(3rem, 8cqw, 5rem);
+  font-weight: 700;
+}
 .holograma__foto::after {
   /* línea de escáner que recorre el retrato */
   content: '';

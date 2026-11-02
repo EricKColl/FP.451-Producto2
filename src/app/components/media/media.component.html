@@ -34,8 +34,15 @@
       <i class="bi bi-broadcast" aria-hidden="true"></i>
       <b>SEÑAL NO DISPONIBLE</b>
       <span>
-        No se ha podido cargar el vídeo de {{ jugador.nombre }} {{ jugador.apellidos }}. Puede que
-        todavía no esté disponible o que el formato no sea compatible.
+        {{
+          jugador.video.trim()
+            ? 'No se ha podido cargar el vídeo de ' +
+              jugador.nombre +
+              ' ' +
+              jugador.apellidos +
+              '. Puede que todavía no esté disponible o que el formato no sea compatible.'
+            : jugador.nombre + ' ' + jugador.apellidos + ' todavía no tiene vídeo.'
+        }}
       </span>
     </div>
   </div>
