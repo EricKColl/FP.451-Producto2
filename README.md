@@ -4,12 +4,21 @@
 
 ## Equipo · Front Stack Attack
 
-| Persona   | Rol en el Producto 2                                     | Nombre               |
-| --------- | -------------------------------------------------------- | -------------------- |
-| Persona 1 | Coordinación, Firebase, datos en la nube e integración   | Erick Coll Rodríguez |
-| Persona 2 | Listado conectado: borrar y actualización en tiempo real | Jacobo Barrera Toba  |
-| Persona 3 | Ficha: edición de todos los campos                       | Marc Pérez Rodríguez |
-| Persona 4 | Alta de jugadores y subida de foto y vídeo               | Carles Miguel Millán |
+| Persona   | Rol en el Producto 2                                        | Nombre               |
+| --------- | ----------------------------------------------------------- | -------------------- |
+| Persona 1 | Coordinación, Firebase, servidor de archivos e integración  | Erick Coll Rodríguez |
+| Persona 2 | Listado conectado: borrar y actualización en tiempo real    | Jacobo Barrera Toba  |
+| Persona 3 | Ficha: edición de todos los campos y subida de foto y vídeo | Marc Pérez Rodríguez |
+| Persona 4 | Alta de jugadores: formulario común y validaciones          | Carles Miguel Millán |
+
+## Qué se puede hacer
+
+- **Consultar la plantilla** con buscador y filtros por posición y edad; la lista llega de Firestore y se actualiza sola.
+- **Borrar** un jugador con la papelera de su tarjeta, tras confirmarlo en una ventana.
+- **Añadir** un jugador con el botón **Nuevo**: formulario con todos los campos, obligatorios y con rangos, y un mensaje de error en cada campo.
+- **Editar** cualquier dato desde la ficha con el botón **Editar**, con el mismo formulario.
+- **Subir la foto y el vídeo** desde el ordenador, con vista previa y barra de progreso, al dar de alta o al editar.
+- **Avisos** de éxito y de error en todas las acciones. Sin conexión, los cambios se ven al momento y se guardan cuando vuelve la red.
 
 ## Enlaces
 
@@ -41,6 +50,17 @@ npm run datos:cargar -- --reiniciar   # borra la colección y vuelve a cargar lo
 npm run datos:prueba                  # añade un jugador de prueba (bórralo al terminar)
 ```
 
+## Fotos y vídeos (Cloudinary)
+
+Firebase Storage exige el plan de pago Blaze y la UOC no dispone de planes de Firebase, así que los archivos se guardan en **Cloudinary** (plan gratuito), con la aprobación del consultor. En Firestore solo se guarda la dirección (URL) de cada archivo.
+
+| Elemento | Valor                                                                                                     |
+| -------- | --------------------------------------------------------------------------------------------------------- |
+| Cuenta   | `cfto2t9j`, con el preajuste de subida sin firma `equipo-basket` (carpetas `fotos` y `videos`)            |
+| Formatos | Foto: JPG, PNG o WebP de hasta 5 MB. Vídeo: MP4 o WebM de hasta 40 MB                                     |
+| Servicio | [`src/app/services/archivos.service.ts`](src/app/services/archivos.service.ts): `validar()` y `subir()`   |
+| Interfaz | [`src/app/components/subida-archivo`](src/app/components/subida-archivo): elegir, vista previa y progreso |
+
 ## Ramas
 
 | Rama                     | Uso                                                                           |
@@ -67,10 +87,22 @@ Se abre en http://localhost:4200 y se conecta directamente a la base de datos de
 
 > No uses la extensión **Live Server** de VS Code: la página saldría en blanco porque Angular necesita compilarse. Arráncalo siempre con `ng serve` (o `npm start`).
 
+## Pruebas
+
+Pruebas unitarias del formulario y del alta (lógica, sin navegador ni servicios reales):
+
+```bash
+node tests/carles/ejecutar.mjs
+```
+
+Las pruebas en navegador (tiempo real con varios navegadores, alta, edición, borrado, subida, móvil y compilación de producción) y sus resultados se recogen en el documento técnico del Producto 2.
+
 ## Tecnologías
 
-- Angular 22 (componentes standalone, `*ngFor`, `*ngIf`, `@Input`, `@Output`, proyección con `<ng-content>`, pipe propio, RxJS)
+- Angular 22 (componentes standalone, `*ngFor`, `*ngIf`, `@Input`, `@Output`, proyección con `<ng-content>`, pipe propio, RxJS y formularios reactivos)
 - Firebase 13: Cloud Firestore con escucha en tiempo real (`onSnapshot`)
+- Cloudinary: fotos y vídeos subidos desde el ordenador
+- Ventanas `<dialog>` nativas y avisos con la API Popover
 - Bootstrap 5.3.8 en modo oscuro + Bootstrap Icons
 - Tipografías Chakra Petch, Inter y JetBrains Mono (Google Fonts)
 
