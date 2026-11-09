@@ -18,15 +18,28 @@
     FICHA <b>{{ codigo }}</b
     >/{{ total }} · {{ jugador.posicion | uppercase }}
   </p>
-  <button
-    #botonCerrar
-    type="button"
-    class="boton-cerrar"
-    aria-label="Cerrar ficha"
-    (click)="onCerrar()"
-  >
-    <i class="bi bi-x-lg" aria-hidden="true"></i>
-  </button>
+  <div class="escenario__acciones">
+    <button
+      type="button"
+      class="boton-fantasma boton-editar"
+      [attr.aria-label]="'Editar a ' + jugador.nombre + ' ' + jugador.apellidos"
+      aria-haspopup="dialog"
+      title="Editar jugador"
+      (click)="editar()"
+    >
+      <i class="bi bi-pencil-square" aria-hidden="true"></i>
+      <span class="boton-editar__texto">Editar</span>
+    </button>
+    <button
+      #botonCerrar
+      type="button"
+      class="boton-cerrar"
+      aria-label="Cerrar ficha"
+      (click)="onCerrar()"
+    >
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
 </div>
 
 <!-- Pestañas (nav de Bootstrap con el patrón tablist accesible) -->
@@ -203,3 +216,10 @@
     </article>
   </div>
 </div>
+
+<!-- Edición: el formulario común con los datos del jugador -->
+<app-formulario-jugador [guardando]="guardando" (guardar)="guardarCambios($event)">
+  @if (errorGuardado) {
+    <p class="campo__error" role="alert">{{ errorGuardado }}</p>
+  }
+</app-formulario-jugador>
