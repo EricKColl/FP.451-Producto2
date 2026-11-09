@@ -493,3 +493,18 @@ h3 {
     scroll-behavior: auto !important;
   }
 }
+
+/* Transición de la tarjeta a la ficha (View Transitions): el retrato vuela y el resto funde rápido */
+::view-transition-group(retrato) {
+  animation-duration: 0.55s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-old(retrato),
+::view-transition-new(retrato) {
+  border-radius: 50%;
+  overflow: hidden;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.2s;
+}

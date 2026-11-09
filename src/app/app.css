@@ -239,6 +239,11 @@
   }
 }
 
+.reposo__error {
+  font-size: 3rem;
+  color: var(--eb-rojo);
+}
+
 /* ---------- Pie ---------- */
 .pie {
   display: flex;

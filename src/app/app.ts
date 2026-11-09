@@ -7,7 +7,7 @@ import {
   inject,
   Injector,
 } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { NgIf, NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HeaderComponent } from './components/header/header.component';
 import { PlayersComponent } from './components/players/players.component';
@@ -22,6 +22,7 @@ import { EstadoConexion, JugadoresService } from './services/jugadores.service';
   selector: 'app-root',
   imports: [
     NgIf,
+    NgTemplateOutlet,
     HeaderComponent,
     PlayersComponent,
     DetailComponent,
@@ -95,11 +96,46 @@ export class App {
 
   // Lo llama PlayersComponent mediante su @Output (jugadorSeleccionado)
   onJugadorSeleccionado(jugador: Jugador): void {
-    clearTimeout(this.cierrePendiente);
-    this.jugadorActual = jugador;
-    this.fichaAbierta = true;
-    // En móvil y tableta la ficha cubre la pantalla: la página de detrás no se desplaza
-    if (this.esMovil()) document.body.style.overflow = 'hidden';
+    const mostrar = () => {
+      clearTimeout(this.cierrePendiente);
+      this.jugadorActual = jugador;
+      this.fichaAbierta = true;
+      // En móvil y tableta la ficha cubre la pantalla: la página de detrás no se desplaza
+      if (this.esMovil()) document.body.style.overflow = 'hidden';
+    };
+    this.conTransicion(jugador, mostrar);
+  }
+
+  recargar(): void {
+    document.location.reload();
+  }
+
+  // Escritorio: el retrato de la tarjeta «vuela» hasta el holograma de la ficha (View Transitions).
+  // El navegador fotografía el antes y el después y anima el elemento con el mismo nombre.
+  // Sin soporte, en móvil o con movimiento reducido, la ficha se abre como siempre.
+  private conTransicion(jugador: Jugador, cambiar: () => void): void {
+    const avatar = document.querySelector<HTMLElement>(`#jugador-${jugador.id} .avatar`);
+    const doc = document as Document & {
+      startViewTransition?: (fn: () => void) => { finished: Promise<void> };
+    };
+    if (!doc.startViewTransition || !avatar || this.esMovil() || this.movimientoReducido()) {
+      cambiar();
+      return;
+    }
+    avatar.style.setProperty('view-transition-name', 'retrato');
+    const transicion = doc.startViewTransition(() => {
+      avatar.style.removeProperty('view-transition-name');
+      cambiar();
+      this.cdr.detectChanges();
+      document
+        .querySelector<HTMLElement>('.holograma__foto')
+        ?.style.setProperty('view-transition-name', 'retrato');
+    });
+    transicion.finished.finally(() =>
+      document
+        .querySelector<HTMLElement>('.holograma__foto')
+        ?.style.removeProperty('view-transition-name'),
+    );
   }
 
   // Lo llama DetailComponent mediante su @Output (cerrar)
