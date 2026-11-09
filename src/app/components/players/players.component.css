@@ -334,7 +334,6 @@
   from {
     opacity: 0;
     transform: translateY(8px) scale(0.98);
-    filter: blur(3px);
   }
 }
 .fila-sale {
@@ -343,17 +342,20 @@
   pointer-events: none;
   animation: fila-sale 0.45s ease-in forwards;
 }
+/* Solo opacidad, transformaciones y sombra: animaciones baratas también en móviles modestos */
 @keyframes fila-sale {
   35% {
-    opacity: 0.85;
-    filter: drop-shadow(0 0 10px var(--eb-rojo));
+    opacity: 0.9;
   }
   to {
     height: 0;
     opacity: 0;
     transform: translateX(18px) scaleY(0.7);
-    filter: blur(6px);
   }
+}
+.fila-sale .tarjeta {
+  border-color: var(--eb-rojo);
+  box-shadow: 0 0 18px -4px var(--eb-rojo);
 }
 
 /* Alta (cian) o edición (naranja) desde otro dispositivo: destello que se apaga solo */
