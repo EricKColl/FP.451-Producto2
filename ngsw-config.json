@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "aplicacion",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js",
+          "/iconos/**"
+        ]
+      }
+    },
+    {
+      "name": "fotos-y-tipografias",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": ["/assets/img/**", "/media/**", "/**/*.(svg|woff|woff2|ttf)"]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "fotos-cloudinary",
+      "urls": ["https://res.cloudinary.com/**/image/**"],
+      "cacheConfig": { "strategy": "performance", "maxSize": 120, "maxAge": "30d" }
+    },
+    {
+      "name": "tipografias-google",
+      "urls": ["https://fonts.googleapis.com/**", "https://fonts.gstatic.com/**"],
+      "cacheConfig": { "strategy": "performance", "maxSize": 30, "maxAge": "365d" }
+    }
+  ]
+}
