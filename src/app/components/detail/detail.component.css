@@ -103,7 +103,9 @@
   gap: 10px;
 }
 
+/* Misma altura que el botón de cerrar, para que queden alineados */
 .boton-editar {
+  height: 38px;
   background: rgb(5 10 20 / 0.6);
   color: var(--eb-texto);
 }
@@ -111,6 +113,17 @@
 .boton-editar:hover {
   border-color: var(--eb-cian);
   color: var(--eb-cian);
+}
+
+/* Pantallas táctiles: los dos botones con la zona táctil recomendada de 44 px */
+@media (pointer: coarse) {
+  .boton-editar {
+    height: 44px;
+  }
+  .escenario__acciones .boton-cerrar {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 .escenario__codigo {
@@ -759,6 +772,27 @@
     }
     .datos {
       grid-template-columns: repeat(2, 1fr);
+    }
+    /* Sin el código, las pestañas pasan a la izquierda y dejan sitio a Editar y cerrar */
+    .pestanas {
+      left: 18px;
+      transform: none;
+    }
+  }
+  /* Escenario muy estrecho (unos 992-1050 px de pantalla): pestañas compactas y Editar solo
+     con el icono (su nombre accesible sigue siendo «Editar a …») */
+  @container (max-width: 560px) {
+    .pestanas .pestana {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+    .boton-editar {
+      width: 38px;
+      padding: 0;
+    }
+    .boton-editar__texto {
+      display: none;
     }
   }
 }
