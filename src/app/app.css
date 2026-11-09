@@ -221,6 +221,24 @@
   color: var(--eb-texto-3);
 }
 
+/* Escenario bajo: esfera y textos más compactos para que quepa el panel de cifras */
+@container (max-height: 820px) {
+  .reposo {
+    gap: 10px;
+    padding: 20px;
+  }
+  .esfera {
+    width: 120px;
+    height: 120px;
+  }
+  .reposo__haz {
+    width: 150px;
+  }
+  .reposo__titulo {
+    font-size: 1.35rem;
+  }
+}
+
 /* ---------- Pie ---------- */
 .pie {
   display: flex;

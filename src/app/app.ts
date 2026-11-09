@@ -14,6 +14,7 @@ import { PlayersComponent } from './components/players/players.component';
 import { DetailComponent } from './components/detail/detail.component';
 import { MediaComponent } from './components/media/media.component';
 import { AvisosComponent } from './components/avisos/avisos.component';
+import { PanelEquipoComponent } from './components/panel-equipo/panel-equipo.component';
 import { Jugador } from './models/jugador.model';
 import { EstadoConexion, JugadoresService } from './services/jugadores.service';
 
@@ -26,6 +27,7 @@ import { EstadoConexion, JugadoresService } from './services/jugadores.service';
     DetailComponent,
     MediaComponent,
     AvisosComponent,
+    PanelEquipoComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',

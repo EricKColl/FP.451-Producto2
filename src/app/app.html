@@ -67,6 +67,8 @@
                     : 'PROYECTOR EN ESPERA · ' + totalJugadores + ' PERFILES CARGADOS'
               }}
             </p>
+            <!-- Cifras de la plantilla, calculadas en directo con los datos de Firestore -->
+            <app-panel-equipo [jugadores]="jugadores"></app-panel-equipo>
           </div>
         </ng-template>
       </section>
