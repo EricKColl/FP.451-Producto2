@@ -67,14 +67,15 @@
     </div>
 
     <ul id="lista" class="lista list-unstyled" aria-label="Jugadores de la plantilla">
-      <!-- animate.enter / animate.leave: la tarjeta se «materializa» al llegar y se disuelve al irse -->
+      <!-- animate.enter / animate.leave: la tarjeta se «materializa» al llegar y, si se borra, se
+           disuelve en rojo al irse (al filtrar desaparece al instante) -->
       <li
         *ngFor="let jugador of filtrados; trackBy: porId"
         class="fila"
         [class.fila--nueva]="destacados.get(jugador.id) === 'alta'"
         [class.fila--editada]="destacados.get(jugador.id) === 'edicion'"
         animate.enter="fila-entra"
-        animate.leave="fila-sale"
+        [animate.leave]="borrados.has(jugador.id) ? 'fila-sale' : ''"
       >
         <!-- Dentro de un <button> solo se permiten elementos en línea: por eso todo son <span> -->
         <button

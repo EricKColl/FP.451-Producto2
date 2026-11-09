@@ -60,6 +60,8 @@ export class PlayersComponent implements OnChanges {
 
   // Jugadores que acaban de cambiar en otro dispositivo: su tarjeta se ilumina unos segundos
   destacados = new Map<string, 'alta' | 'edicion'>();
+  // Jugadores borrados (aquí o en otro dispositivo): solo su tarjeta se va con la animación de borrado
+  borrados = new Set<string>();
   // Tarjetas fantasma mientras llega la plantilla de Firestore
   readonly esqueletos = [0, 1, 2, 3, 4, 5];
 
@@ -126,6 +128,7 @@ export class PlayersComponent implements OnChanges {
     if (!jugador) return;
 
     const nombre = `${jugador.nombre} ${jugador.apellidos}`;
+    this.borrados.add(jugador.id);
     this.confirmacion.nativeElement.close();
     this.enfocarVecino(jugador);
     try {
@@ -172,6 +175,8 @@ export class PlayersComponent implements OnChanges {
 
   // Altas, ediciones y borrados que llegan de fuera: aviso informativo y tarjeta iluminada
   private alCambiarFuera({ tipo, jugador, remoto }: CambioJugador): void {
+    if (tipo === 'borrado') this.borrados.add(jugador.id);
+    else this.borrados.delete(jugador.id);
     if (!remoto) return;
     const nombre = `${jugador.nombre} ${jugador.apellidos}`;
     const textos = {

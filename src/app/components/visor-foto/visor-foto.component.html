@@ -3,6 +3,7 @@
   class="visor"
   [attr.aria-label]="'Foto de ' + nombre"
   (click)="alPulsarFondo($event)"
+  (close)="abierto = false"
 >
   <figure class="visor__marco hud">
     <!-- La foto se pide a 1600 px (las de Cloudinary, en el formato más ligero que admita el navegador) -->
@@ -17,7 +18,10 @@
       (mousemove)="ampliada && moverOrigen($event)"
       (keydown.enter)="$event.preventDefault(); alternarZoomTeclado()"
     >
-      <img [src]="foto | miniatura: 1600 : 0" [alt]="'Foto de ' + nombre" />
+      <!-- La foto grande solo se pide (y solo existe) mientras el visor está abierto -->
+      @if (abierto && foto) {
+        <img [src]="foto | miniatura: 1600 : 0" [alt]="'Foto de ' + nombre" />
+      }
     </button>
     <figcaption class="visor__pie">
       <span class="visor__nombre">{{ nombre }}</span>

@@ -26,11 +26,13 @@ export class VisorFotoComponent {
   @Input() pie = '';
   @ViewChild('visor', { static: true }) visor!: ElementRef<HTMLDialogElement>;
 
+  abierto = false;
   ampliada = false;
   origen = '50% 50%';
   private readonly cdr = inject(ChangeDetectorRef);
 
   abrir(): void {
+    this.abierto = true;
     this.ampliada = false;
     this.origen = '50% 50%';
     this.visor.nativeElement.showModal();

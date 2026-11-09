@@ -45,3 +45,7 @@ Thumbs.db
 
 # Documentación de entrega (Word, capturas y generador; se entrega aparte)
 /documentacion/
+
+# Firebase CLI
+.firebase/
+firebase-debug.log
