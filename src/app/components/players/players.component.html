@@ -80,12 +80,12 @@
           <span class="avatar">
             <!-- alt vacío: el nombre ya aparece al lado y el lector de pantalla no lo repite -->
             <img
-              *ngIf="!fotosNoDisponibles.has(jugador.id); else iniciales"
+              *ngIf="jugador.foto && !fotosNoDisponibles.has(jugador.foto); else iniciales"
               [src]="jugador.foto"
               alt=""
               width="48"
               height="48"
-              (error)="marcarFotoNoDisponible(jugador.id)"
+              (error)="marcarFotoNoDisponible(jugador.foto)"
             />
             <ng-template #iniciales>
               <span class="avatar__iniciales" aria-hidden="true">

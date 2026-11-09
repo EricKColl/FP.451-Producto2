@@ -46,6 +46,8 @@ export class PlayersComponent implements OnChanges {
   textoBusqueda = '';
   posicionSeleccionada = '';
   rangoEdad = '';
+  // Direcciones de las fotos que no se han podido cargar (por dirección y no por jugador: si se
+  // edita el jugador y se le sube una foto nueva, la tarjeta vuelve a mostrarla)
   fotosNoDisponibles = new Set<string>();
 
   // Jugador al que corresponde la papelera pulsada.
@@ -76,8 +78,8 @@ export class PlayersComponent implements OnChanges {
     return jugador.id;
   }
 
-  marcarFotoNoDisponible(id: string): void {
-    this.fotosNoDisponibles.add(id);
+  marcarFotoNoDisponible(foto: string): void {
+    this.fotosNoDisponibles.add(foto);
   }
 
   seleccionar(jugador: Jugador): void {
