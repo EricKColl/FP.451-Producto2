@@ -108,4 +108,26 @@
       </p>
     </div>
   </div>
+
+  <!-- Estado de la conexión con Cloud Firestore. role="status": el lector de pantalla anuncia los cambios -->
+  <p
+    class="estado"
+    [class]="'estado estado--' + conexion"
+    role="status"
+    tabindex="0"
+    [matTooltip]="estado.ayuda"
+    matTooltipPosition="below"
+  >
+    <span class="estado__luz" aria-hidden="true"></span>
+    <span class="estado__texto">{{ estado.texto }}</span>
+  </p>
+
+  <!-- Línea de progreso bajo la cabecera mientras se conecta o se guardan cambios -->
+  @if (conexion === 'conectando' || conexion === 'sincronizando') {
+    <mat-progress-bar
+      class="cabecera__progreso"
+      mode="indeterminate"
+      aria-hidden="true"
+    ></mat-progress-bar>
+  }
 </header>

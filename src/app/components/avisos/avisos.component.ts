@@ -6,14 +6,14 @@ import {
   inject,
   ViewChild,
 } from '@angular/core';
-import { NgFor } from '@angular/common';
-import { AvisosService } from '../../services/avisos.service';
+import { NgClass, NgFor } from '@angular/common';
+import { Aviso, AvisosService } from '../../services/avisos.service';
 
 // Zona de avisos (esquina inferior derecha). Es un "popover": así se dibuja por encima
 // de todo, también de las ventanas abiertas (formularios y confirmaciones).
 @Component({
   selector: 'app-avisos',
-  imports: [NgFor],
+  imports: [NgFor, NgClass],
   templateUrl: './avisos.component.html',
   styleUrl: './avisos.component.css',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -22,6 +22,11 @@ export class AvisosComponent {
   @ViewChild('zona', { static: true }) zona!: ElementRef<HTMLElement>;
 
   readonly servicio = inject(AvisosService);
+
+  // Con el id, los avisos que siguen en pantalla no se vuelven a pintar (ni a animar)
+  porId(_: number, aviso: Aviso): number {
+    return aviso.id;
+  }
 
   constructor() {
     // Cada vez que cambia la lista: se muestra la zona si hay avisos y se oculta si no.

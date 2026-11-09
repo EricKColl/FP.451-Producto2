@@ -323,3 +323,126 @@
     overflow: visible;
   }
 }
+
+/* ---------- Tiempo real: llegada, salida y cambios hechos en otro dispositivo ---------- */
+
+/* La tarjeta que llega se «materializa»; la que se borra se disuelve y deja su hueco poco a poco */
+.fila-entra {
+  animation: fila-entra 0.45s var(--eb-suave) both;
+}
+@keyframes fila-entra {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    filter: blur(3px);
+  }
+}
+.fila-sale {
+  interpolate-size: allow-keywords;
+  overflow: hidden;
+  pointer-events: none;
+  animation: fila-sale 0.45s ease-in forwards;
+}
+@keyframes fila-sale {
+  35% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 10px var(--eb-rojo));
+  }
+  to {
+    height: 0;
+    opacity: 0;
+    transform: translateX(18px) scaleY(0.7);
+    filter: blur(6px);
+  }
+}
+
+/* Alta (cian) o edición (naranja) desde otro dispositivo: destello que se apaga solo */
+.fila--nueva .tarjeta,
+.fila--editada .tarjeta {
+  animation: destello 2.6s var(--eb-suave);
+}
+.fila--nueva .tarjeta {
+  --destello: var(--eb-cian);
+}
+.fila--editada .tarjeta {
+  --destello: var(--eb-naranja);
+}
+@keyframes destello {
+  0%,
+  35% {
+    border-color: var(--destello);
+    background-color: color-mix(in oklch, var(--destello) 14%, transparent);
+    box-shadow:
+      0 0 0 1px var(--destello),
+      0 0 24px -4px var(--destello);
+  }
+}
+
+/* Tarjetas fantasma mientras llega la plantilla */
+.esqueleto {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px 1fr 34px;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px 10px 12px;
+  border: 1px solid var(--eb-linea);
+  border-radius: var(--eb-radio-s);
+  overflow: hidden;
+  opacity: calc(1 - var(--i) * 0.13);
+}
+.esqueleto__avatar,
+.esqueleto__lineas span,
+.esqueleto__dorsal {
+  background: rgb(120 205 255 / 0.08);
+}
+.esqueleto__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+.esqueleto__lineas {
+  display: grid;
+  gap: 8px;
+}
+.esqueleto__lineas span {
+  height: 10px;
+  width: 72%;
+  border-radius: 6px;
+}
+.esqueleto__lineas span + span {
+  width: 46%;
+}
+.esqueleto__dorsal {
+  height: 22px;
+  border-radius: 6px;
+}
+.esqueleto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgb(120 205 255 / 0.13) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  animation: barrido 1.6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.12s);
+}
+@keyframes barrido {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fila-entra,
+  .fila-sale,
+  .fila--nueva .tarjeta,
+  .fila--editada .tarjeta,
+  .esqueleto::after {
+    animation: none;
+  }
+}

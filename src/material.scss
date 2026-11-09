@@ -1,0 +1,53 @@
+// =========================================================
+// ANGULAR MATERIAL · tema «Holo Court»
+// Material aporta piezas de interacción (tooltips, efecto de pulsación y barra de progreso)
+// con los colores del proyecto: cian como color principal y naranja balón como acento,
+// en modo oscuro. Bootstrap sigue siendo la base de la maquetación.
+// =========================================================
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$cyan-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: (
+        plain-family: 'Inter',
+        brand-family: 'Chakra Petch',
+      ),
+      density: 0,
+    )
+  );
+
+  // Tooltips con el vidrio y la línea cian de los paneles
+  @include mat.tooltip-overrides(
+    (
+      container-color: rgb(10 18 34 / 0.96),
+      supporting-text-color: #e9f2ff,
+      supporting-text-font: 'Inter',
+      supporting-text-size: 0.78rem,
+      supporting-text-weight: 500,
+      container-shape: 8px,
+    )
+  );
+
+  // Barra de progreso fina en cian, sobre un carril casi transparente
+  @include mat.progress-bar-overrides(
+    (
+      active-indicator-color: oklch(0.86 0.14 205),
+      track-color: rgb(120 205 255 / 0.12),
+      active-indicator-height: 2px,
+      track-height: 2px,
+    )
+  );
+}
+
+// El tooltip lleva el borde fino de los paneles del proyecto
+.mat-mdc-tooltip .mat-mdc-tooltip-surface {
+  border: 1px solid rgb(120 205 255 / 0.32);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.45);
+  letter-spacing: 0.01em;
+}

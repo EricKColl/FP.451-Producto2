@@ -67,7 +67,15 @@
     </div>
 
     <ul id="lista" class="lista list-unstyled" aria-label="Jugadores de la plantilla">
-      <li *ngFor="let jugador of filtrados; trackBy: porId" class="fila">
+      <!-- animate.enter / animate.leave: la tarjeta se «materializa» al llegar y se disuelve al irse -->
+      <li
+        *ngFor="let jugador of filtrados; trackBy: porId"
+        class="fila"
+        [class.fila--nueva]="destacados.get(jugador.id) === 'alta'"
+        [class.fila--editada]="destacados.get(jugador.id) === 'edicion'"
+        animate.enter="fila-entra"
+        animate.leave="fila-sale"
+      >
         <!-- Dentro de un <button> solo se permiten elementos en línea: por eso todo son <span> -->
         <button
           type="button"
@@ -75,6 +83,8 @@
           [id]="'jugador-' + jugador.id"
           [class.seleccionada]="jugador.id === idSeleccionado"
           [attr.aria-pressed]="jugador.id === idSeleccionado"
+          matRipple
+          [matRippleColor]="'rgb(120 205 255 / 0.14)'"
           (click)="seleccionar(jugador)"
         >
           <span class="avatar">
@@ -113,12 +123,26 @@
           type="button"
           class="borrar"
           [attr.aria-label]="'Borrar a ' + jugador.nombre + ' ' + jugador.apellidos"
-          title="Borrar jugador"
+          matTooltip="Borrar jugador"
+          matTooltipPosition="left"
           aria-haspopup="dialog"
           (click)="pedirBorrado(jugador)"
         >
           <i class="bi bi-trash3" aria-hidden="true"></i>
         </button>
+      </li>
+    </ul>
+
+    <!-- Mientras llega la plantilla: tarjetas fantasma con un barrido de luz -->
+    <ul
+      *ngIf="cargando && filtrados.length === 0"
+      class="lista esqueletos list-unstyled"
+      aria-hidden="true"
+    >
+      <li *ngFor="let n of esqueletos" class="esqueleto" [style.--i]="n">
+        <span class="esqueleto__avatar"></span>
+        <span class="esqueleto__lineas"><span></span><span></span></span>
+        <span class="esqueleto__dorsal"></span>
       </li>
     </ul>
 

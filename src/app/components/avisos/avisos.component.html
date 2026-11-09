@@ -1,15 +1,19 @@
 <!-- aria-live: el lector de pantalla lee cada aviso nuevo sin mover el foco -->
 <div #zona class="avisos" popover="manual" aria-live="polite">
   <div
-    *ngFor="let aviso of servicio.avisos()"
+    *ngFor="let aviso of servicio.avisos(); trackBy: porId"
     class="aviso vidrio"
     [class.aviso--error]="aviso.tipo === 'error'"
+    [class.aviso--info]="aviso.tipo === 'info'"
+    [class.aviso--accion]="!!aviso.accion"
+    [style.--duracion.ms]="aviso.duracion"
     [attr.role]="aviso.tipo === 'error' ? 'alert' : 'status'"
   >
     <i
       class="bi aviso__icono"
       [class.bi-check-circle-fill]="aviso.tipo === 'exito'"
       [class.bi-exclamation-triangle-fill]="aviso.tipo === 'error'"
+      [class.bi-broadcast]="aviso.tipo === 'info'"
       aria-hidden="true"
     ></i>
     <p class="aviso__texto">{{ aviso.texto }}</p>
@@ -21,5 +25,15 @@
     >
       <i class="bi bi-x-lg" aria-hidden="true"></i>
     </button>
+    <!-- Acción del aviso (por ejemplo «Deshacer»), con una línea que muestra el tiempo que queda -->
+    @if (aviso.accion) {
+      <button type="button" class="aviso__accion" (click)="servicio.ejecutar(aviso)">
+        @if (aviso.accion.icono) {
+          <i class="bi" [ngClass]="aviso.accion.icono" aria-hidden="true"></i>
+        }
+        {{ aviso.accion.texto }}
+      </button>
+      <span class="aviso__tiempo" aria-hidden="true"></span>
+    }
   </div>
 </div>

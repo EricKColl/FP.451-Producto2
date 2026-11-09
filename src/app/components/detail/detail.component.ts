@@ -99,6 +99,16 @@ function media(lista: number[]): number {
   return lista.reduce((suma, valor) => suma + valor, 0) / lista.length;
 }
 
+// Mismos datos sin contar la fecha de modificación (el servidor la confirma después de guardar)
+function mismoJugador(antes: Jugador | undefined, ahora: Jugador): boolean {
+  if (!antes) return false;
+  const sinFecha = ({ actualizadoEn, ...resto }: Jugador) => (
+    void actualizadoEn,
+    JSON.stringify(resto)
+  );
+  return sinFecha(antes) === sinFecha(ahora);
+}
+
 // El formulario devuelve los mismos datos que ya tiene el jugador (no hay nada que guardar)
 function mismosDatos(jugador: Jugador, datos: DatosJugador): boolean {
   const { estadisticas, ...resto } = datos;
@@ -194,9 +204,11 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
     const j = this.jugador;
     const otroJugador = cambios['jugador'] && cambios['jugador'].previousValue?.id !== j.id;
     // Otra persona cambia al jugador mientras aquí se edita: el formulario conserva lo escrito
-    if (!otroJugador && cambios['jugador'] && this.editando && !this.guardando) {
+    const datosNuevos = !mismoJugador(cambios['jugador']?.previousValue, j);
+    if (!otroJugador && cambios['jugador'] && datosNuevos && this.editando && !this.guardando) {
       this.avisos.error(
         `Otra persona acaba de modificar a ${j.nombre} ${j.apellidos}. Si guardas, se conservarán tus cambios.`,
+        { clave: 'remoto-' + j.id },
       );
     }
     if (cambios['jugador']?.previousValue?.foto !== j.foto) this.fotoRota = false;
@@ -285,6 +297,7 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
     if (this.editando) {
       this.avisos.error(
         `${this.jugador.nombre} ${this.jugador.apellidos} se ha borrado desde otro dispositivo: los cambios no se han guardado.`,
+        { clave: 'remoto-' + this.jugador.id },
       );
     }
     this.cancelarAnimaciones();

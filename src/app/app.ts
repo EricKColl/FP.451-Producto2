@@ -15,7 +15,7 @@ import { DetailComponent } from './components/detail/detail.component';
 import { MediaComponent } from './components/media/media.component';
 import { AvisosComponent } from './components/avisos/avisos.component';
 import { Jugador } from './models/jugador.model';
-import { JugadoresService } from './services/jugadores.service';
+import { EstadoConexion, JugadoresService } from './services/jugadores.service';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +38,8 @@ export class App {
   jugadores: Jugador[] = [];
   cargando = true;
   errorConexion = false;
+  // Estado de la conexión con Firestore, para el indicador de la cabecera
+  conexion: EstadoConexion = 'conectando';
 
   // Jugador elegido en el listado (null = ninguno)
   jugadorActual: Jugador | null = null;
@@ -49,17 +51,20 @@ export class App {
   private cierrePendiente?: number;
 
   constructor() {
+    const servicio = inject(JugadoresService);
+    servicio.conexion$.pipe(takeUntilDestroyed()).subscribe((estado) => {
+      this.conexion = estado;
+      this.cdr.markForCheck();
+    });
     // Suscripción a la colección «jugadores»: se cancela sola al destruirse la aplicación
-    inject(JugadoresService)
-      .jugadores$.pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (lista) => this.alRecibirPlantilla(lista),
-        error: () => {
-          this.cargando = false;
-          this.errorConexion = true;
-          this.cdr.markForCheck();
-        },
-      });
+    servicio.jugadores$.pipe(takeUntilDestroyed()).subscribe({
+      next: (lista) => this.alRecibirPlantilla(lista),
+      error: () => {
+        this.cargando = false;
+        this.errorConexion = true;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   get totalJugadores(): number {
