@@ -17,11 +17,19 @@
       }
     },
     {
-      "name": "fotos-y-tipografias",
+      "name": "fotos-plantilla",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": ["/assets/img/**"]
+      }
+    },
+    {
+      "name": "tipografias-e-iconos",
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/assets/img/**", "/media/**", "/**/*.(svg|woff|woff2|ttf)"]
+        "files": ["/media/**", "/**/*.(svg|woff|woff2|ttf)"]
       }
     }
   ],
@@ -29,12 +37,20 @@
     {
       "name": "fotos-cloudinary",
       "urls": ["https://res.cloudinary.com/**/image/**"],
-      "cacheConfig": { "strategy": "performance", "maxSize": 120, "maxAge": "30d" }
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 120,
+        "maxAge": "30d"
+      }
     },
     {
       "name": "tipografias-google",
       "urls": ["https://fonts.googleapis.com/**", "https://fonts.gstatic.com/**"],
-      "cacheConfig": { "strategy": "performance", "maxSize": 30, "maxAge": "365d" }
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 30,
+        "maxAge": "365d"
+      }
     }
   ]
 }
