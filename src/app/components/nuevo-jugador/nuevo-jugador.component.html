@@ -1,4 +1,5 @@
-<button type="button" class="boton-fantasma" [disabled]="guardando" (click)="abrirFormulario()">
+<!-- Sin [disabled] mientras se guarda: al cerrarse la ventana, el foco vuelve a este botón -->
+<button type="button" class="boton-fantasma" aria-haspopup="dialog" (click)="abrirFormulario()">
   <i class="bi bi-person-plus" aria-hidden="true"></i> Nuevo
 </button>
 
