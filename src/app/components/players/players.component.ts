@@ -17,6 +17,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Jugador, POSICIONES } from '../../models/jugador.model';
 import { FiltroJugadoresPipe } from '../../pipes/filtro-jugadores-pipe';
+import { MiniaturaPipe } from '../../pipes/miniatura.pipe';
 import { CreditosComponent } from '../creditos/creditos.component';
 import { NuevoJugadorComponent } from '../nuevo-jugador/nuevo-jugador.component';
 import { CambioJugador, JugadoresService } from '../../services/jugadores.service';
@@ -30,6 +31,7 @@ import { AvisosService } from '../../services/avisos.service';
     DecimalPipe,
     FormsModule,
     FiltroJugadoresPipe,
+    MiniaturaPipe,
     CreditosComponent,
     NuevoJugadorComponent,
     MatRippleModule,

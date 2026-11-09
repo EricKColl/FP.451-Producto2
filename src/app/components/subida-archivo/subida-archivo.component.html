@@ -1,4 +1,13 @@
-<div class="subida" [class.subida--video]="tipo === 'video'">
+<!-- También se puede soltar el archivo encima (arrastrar y soltar) -->
+<div
+  class="subida"
+  [class.subida--video]="tipo === 'video'"
+  [class.subida--arrastrando]="arrastrando"
+  (dragenter)="alArrastrar($event, true)"
+  (dragover)="alArrastrar($event, true)"
+  (dragleave)="alArrastrar($event, false)"
+  (drop)="alSoltar($event)"
+>
   <div class="subida__vista">
     <img
       *ngIf="url && !vistaRota && tipo === 'foto'"
@@ -22,6 +31,11 @@
         [class.bi-person-bounding-box]="tipo === 'foto'"
         [class.bi-film]="tipo === 'video'"
       ></i>
+      <small>{{ tipo === 'foto' ? 'o arrástrala aquí' : 'o arrástralo aquí' }}</small>
+    </span>
+    <!-- Aviso visual mientras se arrastra un archivo por encima -->
+    <span *ngIf="arrastrando" class="subida__soltar" aria-hidden="true">
+      <i class="bi bi-cloud-arrow-up"></i>Suelta {{ tipo === 'foto' ? 'la foto' : 'el vídeo' }}
     </span>
   </div>
 

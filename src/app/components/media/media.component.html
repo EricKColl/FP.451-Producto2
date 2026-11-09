@@ -78,7 +78,7 @@
           type="button"
           class="ctrl ctrl--play"
           aria-label="Reproducir"
-          title="Reproducir o reanudar"
+          matTooltip="Reproducir o reanudar"
           [disabled]="!videoDisponible || errorDeCarga || reproduciendo"
           (click)="reproducir()"
         >
@@ -88,7 +88,7 @@
           type="button"
           class="ctrl"
           aria-label="Pausar"
-          title="Pausar"
+          matTooltip="Pausar"
           [disabled]="!videoDisponible || errorDeCarga || !reproduciendo"
           (click)="pausar()"
         >
@@ -98,7 +98,7 @@
           type="button"
           class="ctrl"
           aria-label="Stop"
-          title="Stop: detener y volver al inicio"
+          matTooltip="Stop: detener y volver al inicio"
           [disabled]="!videoDisponible || errorDeCarga"
           (click)="stop()"
         >
@@ -111,7 +111,7 @@
           type="button"
           class="ctrl"
           [attr.aria-label]="silenciado || volumen === 0 ? 'Recuperar sonido' : 'Silenciar'"
-          [title]="silenciado || volumen === 0 ? 'Recuperar sonido' : 'Silenciar'"
+          [matTooltip]="silenciado || volumen === 0 ? 'Recuperar sonido' : 'Silenciar'"
           [disabled]="!videoDisponible || errorDeCarga"
           (click)="alternarSilencio()"
         >
@@ -141,7 +141,9 @@
           [attr.aria-label]="
             pantallaCompleta ? 'Salir de pantalla completa' : 'Entrar en pantalla completa'
           "
-          [title]="pantallaCompleta ? 'Salir de pantalla completa' : 'Entrar en pantalla completa'"
+          [matTooltip]="
+            pantallaCompleta ? 'Salir de pantalla completa' : 'Entrar en pantalla completa'
+          "
           [disabled]="!pantallaCompleta && (!videoDisponible || errorDeCarga)"
           (click)="alternarPantallaCompleta()"
         >

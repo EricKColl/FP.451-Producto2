@@ -91,7 +91,7 @@
             <!-- alt vacío: el nombre ya aparece al lado y el lector de pantalla no lo repite -->
             <img
               *ngIf="jugador.foto && !fotosNoDisponibles.has(jugador.foto); else iniciales"
-              [src]="jugador.foto"
+              [src]="jugador.foto | miniatura: 96"
               alt=""
               width="48"
               height="48"

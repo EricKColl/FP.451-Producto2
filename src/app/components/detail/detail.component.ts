@@ -26,6 +26,9 @@ import { MediaComponent } from '../media/media.component';
 import { FormularioJugadorComponent } from '../formulario-jugador/formulario-jugador.component';
 import { confirmadaATiempo, JugadoresService } from '../../services/jugadores.service';
 import { AvisosService } from '../../services/avisos.service';
+import { VisorFotoComponent } from '../visor-foto/visor-foto.component';
+import { MiniaturaPipe } from '../../pipes/miniatura.pipe';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Las tres secciones de la ficha. fx, fy y fs colocan la "cámara" sobre la foto de fondo.
 interface Vista {
@@ -99,6 +102,24 @@ function media(lista: number[]): number {
   return lista.reduce((suma, valor) => suma + valor, 0) / lista.length;
 }
 
+// «hace 3 minutos», «ayer», «hace 2 semanas»...
+const RELATIVO = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
+const TRAMOS: [Intl.RelativeTimeFormatUnit, number][] = [
+  ['year', 31536000],
+  ['month', 2592000],
+  ['week', 604800],
+  ['day', 86400],
+  ['hour', 3600],
+  ['minute', 60],
+];
+function haceTiempo(fecha: Date): string {
+  const segundos = (fecha.getTime() - Date.now()) / 1000;
+  for (const [unidad, tamano] of TRAMOS) {
+    if (Math.abs(segundos) >= tamano) return RELATIVO.format(Math.round(segundos / tamano), unidad);
+  }
+  return 'ahora mismo';
+}
+
 // Mismos datos sin contar la fecha de modificación (el servidor la confirma después de guardar)
 function mismoJugador(antes: Jugador | undefined, ahora: Jugador): boolean {
   if (!antes) return false;
@@ -145,7 +166,17 @@ const CIRCUNFERENCIA = 289; // 2·π·46, radio de los anillos
 
 @Component({
   selector: 'app-detail',
-  imports: [NgFor, NgIf, NgClass, DecimalPipe, UpperCasePipe, FormularioJugadorComponent],
+  imports: [
+    NgFor,
+    NgIf,
+    NgClass,
+    DecimalPipe,
+    UpperCasePipe,
+    FormularioJugadorComponent,
+    VisorFotoComponent,
+    MiniaturaPipe,
+    MatTooltipModule,
+  ],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.css',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -194,6 +225,9 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
   private readonly jugadoresService = inject(JugadoresService);
   private readonly avisos = inject(AvisosService);
   private temporizadores: number[] = [];
+  // Cada medio minuto se recalcula «Actualizado hace…»
+  private reloj = 0;
+  private relojId?: number;
   private fotogramas: number[] = [];
   private movimiento?: Animation;
   private inicioDeslizar: { x: number; y: number } | null = null;
@@ -284,7 +318,18 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
     this.materializar();
   }
 
+  // «Actualizado hace 3 minutos»: fecha de la última modificación en Firestore
+  get actualizado(): string {
+    void this.reloj;
+    const fecha = this.jugador.actualizadoEn;
+    return fecha ? 'Actualizado ' + haceTiempo(fecha) : '';
+  }
+
   ngAfterViewInit(): void {
+    this.relojId = window.setInterval(() => {
+      this.reloj++;
+      this.cdr.markForCheck();
+    }, 30000);
     this.moverIndicador();
     // Las tipografías cambian el ancho de las pestañas: se recoloca el indicador al cargarlas
     document.fonts?.ready.then(() => this.moverIndicador());
@@ -293,6 +338,7 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    clearInterval(this.relojId);
     // La ficha solo se quita con el formulario abierto si otra persona ha borrado al jugador
     if (this.editando) {
       this.avisos.error(

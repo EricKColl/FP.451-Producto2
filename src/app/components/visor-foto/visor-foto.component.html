@@ -1,0 +1,45 @@
+<dialog
+  #visor
+  class="visor"
+  [attr.aria-label]="'Foto de ' + nombre"
+  (click)="alPulsarFondo($event)"
+>
+  <figure class="visor__marco hud">
+    <!-- La foto se pide a 1600 px (las de Cloudinary, en el formato más ligero que admita el navegador) -->
+    <button
+      type="button"
+      class="visor__foto"
+      [class.visor__foto--ampliada]="ampliada"
+      [style.--origen]="origen"
+      [attr.aria-label]="ampliada ? 'Reducir la foto' : 'Ampliar la foto'"
+      [attr.aria-pressed]="ampliada"
+      (click)="alternarZoom($event)"
+      (mousemove)="ampliada && moverOrigen($event)"
+      (keydown.enter)="$event.preventDefault(); alternarZoomTeclado()"
+    >
+      <img [src]="foto | miniatura: 1600 : 0" [alt]="'Foto de ' + nombre" />
+    </button>
+    <figcaption class="visor__pie">
+      <span class="visor__nombre">{{ nombre }}</span>
+      @if (pie) {
+        <span class="visor__credito mono">{{ pie }}</span>
+      }
+      <span class="visor__ayuda mono" aria-hidden="true">
+        {{
+          ampliada
+            ? 'Mueve el puntero para recorrerla · clic para reducir'
+            : 'Clic en la foto para ampliar'
+        }}
+      </span>
+    </figcaption>
+    <button
+      type="button"
+      class="boton-cerrar visor__cerrar"
+      aria-label="Cerrar la foto"
+      matTooltip="Cerrar (Esc)"
+      (click)="cerrar()"
+    >
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </figure>
+</dialog>
