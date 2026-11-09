@@ -19,10 +19,13 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { DecimalPipe, formatNumber, NgClass, NgFor, NgIf, UpperCasePipe } from '@angular/common';
-import { Estadisticas, Jugador } from '../../models/jugador.model';
+import { DatosJugador, Estadisticas, Jugador } from '../../models/jugador.model';
 import { Credito, CreditoVideo } from '../../models/credito.model';
 import { CREDITOS, CREDITOS_VIDEO, fotoOriginal, videoOriginal } from '../../data/creditos.data';
 import { MediaComponent } from '../media/media.component';
+import { FormularioJugadorComponent } from '../formulario-jugador/formulario-jugador.component';
+import { confirmadaATiempo, JugadoresService } from '../../services/jugadores.service';
+import { AvisosService } from '../../services/avisos.service';
 
 // Las tres secciones de la ficha. fx, fy y fs colocan la "cámara" sobre la foto de fondo.
 interface Vista {
@@ -121,7 +124,7 @@ const CIRCUNFERENCIA = 289; // 2·π·46, radio de los anillos
 
 @Component({
   selector: 'app-detail',
-  imports: [NgFor, NgIf, NgClass, DecimalPipe, UpperCasePipe],
+  imports: [NgFor, NgIf, NgClass, DecimalPipe, UpperCasePipe, FormularioJugadorComponent],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.css',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -144,6 +147,8 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
   @ViewChild('indicador') indicador?: ElementRef<HTMLElement>;
   @ViewChild('pista') pista?: ElementRef<HTMLElement>;
   @ViewChildren('pestana') pestanas!: QueryList<ElementRef<HTMLButtonElement>>;
+  @ViewChild(FormularioJugadorComponent) formulario!: FormularioJugadorComponent;
+  guardando = false;
 
   readonly vistas = VISTAS;
   vista = 0;
@@ -163,6 +168,8 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
   private readonly locale = inject(LOCALE_ID);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly host: ElementRef<HTMLElement> = inject(ElementRef);
+  private readonly jugadoresService = inject(JugadoresService);
+  private readonly avisos = inject(AvisosService);
   private temporizadores: number[] = [];
   private fotogramas: number[] = [];
   private movimiento?: Animation;
@@ -263,6 +270,42 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
     this.cerrar.emit();
   }
 
+  editar(): void {
+    if (this.guardando) return;
+    this.media?.pausar();
+    this.formulario.abrir(this.jugador);
+  }
+
+  async guardarCambios(datos: DatosJugador): Promise<void> {
+    if (this.guardando) return;
+    this.guardando = true;
+    this.formulario.guardando = true;
+    const nombre = `${datos.nombre} ${datos.apellidos}`;
+    try {
+      const escritura = this.jugadoresService.actualizar(this.jugador.id, datos);
+      if (await confirmadaATiempo(escritura)) {
+        this.avisos.exito(`Cambios guardados: ${nombre}.`);
+      } else {
+        this.avisos.error(
+          `Sin conexión: los cambios de ${nombre} se guardarán al volver la conexión. No cierres esta pestaña.`,
+        );
+        escritura.then(
+          () => this.avisos.exito(`Cambios guardados: ${nombre}.`),
+          () => this.avisos.error(`No se han podido guardar los cambios de ${nombre}.`),
+        );
+      }
+      this.formulario.cerrar();
+    } catch {
+      this.avisos.error(
+        'No se han podido guardar los cambios. Comprueba la conexión e inténtalo de nuevo.',
+      );
+    } finally {
+      this.guardando = false;
+      this.formulario.guardando = false;
+      this.cdr.markForCheck();
+    }
+  }
+
   irA(indice: number): void {
     if (indice === this.vista) return;
     this.vista = indice;
@@ -341,7 +384,8 @@ export class DetailComponent implements OnChanges, AfterViewInit, OnDestroy {
   @HostListener('pointerdown', ['$event'])
   alTocar(evento: PointerEvent): void {
     const objetivo = evento.target as HTMLElement;
-    if (evento.pointerType === 'mouse' || objetivo.closest('input, button, video, a')) return;
+    if (evento.pointerType === 'mouse' || objetivo.closest('input, button, video, a, dialog'))
+      return;
     this.inicioDeslizar = { x: evento.clientX, y: evento.clientY };
   }
 

@@ -96,6 +96,23 @@
   padding: 16px 18px;
   background: linear-gradient(180deg, rgb(5 8 15 / 0.75), transparent);
 }
+
+.escenario__acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.boton-editar {
+  background: rgb(5 10 20 / 0.6);
+  color: var(--eb-texto);
+}
+
+.boton-editar:hover {
+  border-color: var(--eb-cian);
+  color: var(--eb-cian);
+}
+
 .escenario__codigo {
   margin: 0;
   font-size: 0.7rem;
