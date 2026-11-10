@@ -12,7 +12,8 @@
           "/manifest.webmanifest",
           "/*.css",
           "/*.js",
-          "/iconos/**"
+          "/iconos/**",
+          "!/**/.*"
         ]
       }
     },
@@ -21,7 +22,7 @@
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/assets/img/**"]
+        "files": ["/assets/img/**", "!/**/.*"]
       }
     },
     {
@@ -29,7 +30,7 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/media/**", "/**/*.(svg|woff|woff2|ttf)"]
+        "files": ["/media/**", "/**/*.(svg|woff|woff2|ttf)", "!/**/.*"]
       }
     }
   ],
