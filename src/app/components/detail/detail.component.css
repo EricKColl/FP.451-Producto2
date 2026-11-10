@@ -796,3 +796,55 @@
     }
   }
 }
+
+/* Foto que se amplía: botón invisible del tamaño del retrato, con una lupa al pasar o enfocar */
+.holograma__ampliar {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+.holograma__ampliar:focus-visible {
+  outline: 2px solid var(--eb-cian);
+  outline-offset: -2px;
+  border-radius: 50%;
+}
+.holograma__lupa {
+  position: absolute;
+  right: 18%;
+  bottom: 18%;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--eb-linea-fuerte);
+  border-radius: 50%;
+  background: rgb(5 10 20 / 0.75);
+  color: var(--eb-cian);
+  font-size: 0.8rem;
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity 0.25s,
+    transform 0.25s var(--eb-suave);
+}
+.holograma__ampliar:hover .holograma__lupa,
+.holograma__ampliar:focus-visible .holograma__lupa {
+  opacity: 1;
+  transform: none;
+}
+/* La línea de escáner que recorre el retrato no debe quedarse los clics de la foto */
+.holograma__foto::after {
+  pointer-events: none;
+}
+.perfil__actualizado {
+  margin: -6px 0 14px;
+  color: var(--eb-texto-3);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}

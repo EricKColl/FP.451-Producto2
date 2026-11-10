@@ -1,0 +1,24 @@
+{
+  "name": "EQUIPO BASKET · Plantilla en la nube",
+  "short_name": "Equipo Basket",
+  "description": "Selección histórica de la NBA: plantilla en tiempo real con Cloud Firestore, fichas, estadísticas y vídeos.",
+  "lang": "es",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#05080f",
+  "theme_color": "#05080f",
+  "categories": ["sports", "entertainment"],
+  "icons": [
+    { "src": "iconos/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    {
+      "src": "iconos/icono-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

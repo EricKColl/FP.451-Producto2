@@ -62,12 +62,38 @@ export class SubidaArchivoComponent {
     this.error = '';
   }
 
+  // Hay un archivo arrastrado encima del componente
+  arrastrando = false;
+
   async alElegirArchivo(evento: Event): Promise<void> {
     const selector = evento.target as HTMLInputElement;
     const archivo = selector.files?.[0];
     selector.value = '';
-    if (!archivo) return;
+    if (archivo) await this.procesar(archivo);
+  }
 
+  // Arrastrar y soltar: el archivo soltado sigue el mismo camino que el elegido con el botón
+  alArrastrar(evento: DragEvent, encima: boolean): void {
+    if (!evento.dataTransfer?.types.includes('Files')) return;
+    evento.preventDefault();
+    if (evento.type === 'dragleave' && this.contiene(evento)) return;
+    this.arrastrando = encima && this.progreso === null;
+  }
+
+  async alSoltar(evento: DragEvent): Promise<void> {
+    evento.preventDefault();
+    this.arrastrando = false;
+    const archivo = evento.dataTransfer?.files?.[0];
+    if (archivo && this.progreso === null) await this.procesar(archivo);
+  }
+
+  // dragleave también salta al pasar por encima de un hijo: solo cuenta si se sale del todo
+  private contiene(evento: DragEvent): boolean {
+    const destino = evento.relatedTarget as Node | null;
+    return !!destino && (evento.currentTarget as HTMLElement).contains(destino);
+  }
+
+  private async procesar(archivo: File): Promise<void> {
     this.error = this.archivos.validar(archivo, this.tipo) ?? '';
     if (this.error) return;
 

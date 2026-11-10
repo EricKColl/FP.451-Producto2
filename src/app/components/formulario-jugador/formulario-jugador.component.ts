@@ -139,7 +139,8 @@ export class FormularioJugadorComponent {
     this.formulario.reset();
     if (jugador) {
       // setValue copia los valores en los controles, sin enlazar el objeto original.
-      const { id, ...datos } = jugador;
+      const { id, actualizadoEn, ...datos } = jugador;
+      void [id, actualizadoEn];
       this.formulario.setValue(datos);
     }
     if (!this.dialogo.nativeElement.open) this.dialogo.nativeElement.showModal();

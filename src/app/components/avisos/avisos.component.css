@@ -31,6 +31,56 @@
 .aviso--error {
   --tono: var(--eb-rojo);
 }
+/* Cambios que llegan de otro dispositivo: cian, el color de la conexión en directo */
+.aviso--info {
+  --tono: var(--eb-cian);
+}
+/* Con acción (por ejemplo «Deshacer»): el botón ocupa una fila propia */
+.aviso--accion {
+  position: relative;
+  overflow: hidden;
+  row-gap: 10px;
+}
+.aviso__accion {
+  grid-column: 2 / 4;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid color-mix(in oklch, var(--eb-cian) 55%, transparent);
+  border-radius: 999px;
+  background: var(--eb-cian-tenue);
+  color: var(--eb-cian);
+  font-family: var(--eb-fuente-titulos);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.aviso__accion:hover,
+.aviso__accion:focus-visible {
+  background: var(--eb-cian);
+  color: var(--eb-fondo-0);
+}
+/* Línea que se vacía mientras la acción sigue disponible */
+.aviso__tiempo {
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: var(--eb-cian);
+  transform-origin: left;
+  animation: tiempo-aviso var(--duracion, 6000ms) linear forwards;
+}
+@keyframes tiempo-aviso {
+  to {
+    transform: scaleX(0);
+  }
+}
 @keyframes entrar-aviso {
   from {
     opacity: 0;

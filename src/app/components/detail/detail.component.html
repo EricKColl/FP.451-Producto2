@@ -2,7 +2,9 @@
 <div class="holo-fondo" aria-hidden="true">
   <div
     class="holo-fondo__foto"
-    [style.background-image]="jugador.foto && !fotoRota ? 'url(' + jugador.foto + ')' : 'none'"
+    [style.background-image]="
+      jugador.foto && !fotoRota ? 'url(' + (jugador.foto | miniatura: 1600 : 0) + ')' : 'none'
+    "
     [style.--fx]="vistas[vista].fx"
     [style.--fy]="vistas[vista].fy"
     [style.--fs]="vistas[vista].fs"
@@ -24,7 +26,7 @@
       class="boton-fantasma boton-editar"
       [attr.aria-label]="'Editar a ' + jugador.nombre + ' ' + jugador.apellidos"
       aria-haspopup="dialog"
-      title="Editar jugador"
+      matTooltip="Editar jugador"
       (click)="editar()"
     >
       <i class="bi bi-pencil-square" aria-hidden="true"></i>
@@ -35,6 +37,7 @@
       type="button"
       class="boton-cerrar"
       aria-label="Cerrar ficha"
+      matTooltip="Cerrar ficha (Esc)"
       (click)="onCerrar()"
     >
       <i class="bi bi-x-lg" aria-hidden="true"></i>
@@ -80,14 +83,25 @@
             <div class="holograma__anillo" aria-hidden="true"></div>
             <div class="holograma__anillo holograma__anillo--2" aria-hidden="true"></div>
             <div class="holograma__foto">
-              <img
+              <!-- La foto se amplía en el visor a pantalla completa -->
+              <button
                 *ngIf="jugador.foto && !fotoRota; else iniciales"
-                [src]="jugador.foto"
-                [alt]="'Foto de ' + jugador.nombre + ' ' + jugador.apellidos"
-                width="300"
-                height="300"
-                (error)="fotoRota = true"
-              />
+                type="button"
+                class="holograma__ampliar"
+                [attr.aria-label]="'Ampliar la foto de ' + jugador.nombre + ' ' + jugador.apellidos"
+                aria-haspopup="dialog"
+                matTooltip="Ampliar foto"
+                (click)="visorFoto.abrir()"
+              >
+                <img
+                  [src]="jugador.foto | miniatura: 600"
+                  [alt]="'Foto de ' + jugador.nombre + ' ' + jugador.apellidos"
+                  width="300"
+                  height="300"
+                  (error)="fotoRota = true"
+                />
+                <i class="bi bi-arrows-angle-expand holograma__lupa" aria-hidden="true"></i>
+              </button>
               <!-- Sin foto: las iniciales, como en el listado -->
               <ng-template #iniciales>
                 <span class="holograma__iniciales" aria-hidden="true">
@@ -118,6 +132,12 @@
           <p *ngIf="equipo" class="perfil__equipo mono entra" style="--i: 3">
             {{ equipo | uppercase }}
           </p>
+          <!-- Última modificación en Firestore, en tiempo relativo («hace 3 minutos») -->
+          @if (actualizado) {
+            <p class="perfil__actualizado mono entra" style="--i: 3">
+              <i class="bi bi-clock-history" aria-hidden="true"></i> {{ actualizado }}
+            </p>
+          }
           <dl class="datos">
             <div *ngFor="let dato of datos; let i = index" class="dato entra" [style.--i]="4 + i">
               <dt>{{ dato.etiqueta }}</dt>
@@ -223,3 +243,11 @@
     <p class="campo__error" role="alert">{{ errorGuardado }}</p>
   }
 </app-formulario-jugador>
+
+<!-- Visor de la foto a pantalla completa -->
+<app-visor-foto
+  #visorFoto
+  [foto]="jugador.foto"
+  [nombre]="jugador.nombre + ' ' + jugador.apellidos"
+  [pie]="credito ? 'Foto: ' + autorFoto + ' · ' + credito.licencia : ''"
+></app-visor-foto>

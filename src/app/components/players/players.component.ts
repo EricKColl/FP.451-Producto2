@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -11,11 +12,15 @@ import {
 } from '@angular/core';
 import { DecimalPipe, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatRippleModule } from '@angular/material/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Jugador, POSICIONES } from '../../models/jugador.model';
 import { FiltroJugadoresPipe } from '../../pipes/filtro-jugadores-pipe';
+import { MiniaturaPipe } from '../../pipes/miniatura.pipe';
 import { CreditosComponent } from '../creditos/creditos.component';
 import { NuevoJugadorComponent } from '../nuevo-jugador/nuevo-jugador.component';
-import { JugadoresService } from '../../services/jugadores.service';
+import { CambioJugador, JugadoresService } from '../../services/jugadores.service';
 import { AvisosService } from '../../services/avisos.service';
 
 @Component({
@@ -26,8 +31,11 @@ import { AvisosService } from '../../services/avisos.service';
     DecimalPipe,
     FormsModule,
     FiltroJugadoresPipe,
+    MiniaturaPipe,
     CreditosComponent,
     NuevoJugadorComponent,
+    MatRippleModule,
+    MatTooltipModule,
   ],
   templateUrl: './players.component.html',
   styleUrl: './players.component.css',
@@ -50,6 +58,13 @@ export class PlayersComponent implements OnChanges {
   // edita el jugador y se le sube una foto nueva, la tarjeta vuelve a mostrarla)
   fotosNoDisponibles = new Set<string>();
 
+  // Jugadores que acaban de cambiar en otro dispositivo: su tarjeta se ilumina unos segundos
+  destacados = new Map<string, 'alta' | 'edicion'>();
+  // Jugadores borrados (aquí o en otro dispositivo): solo su tarjeta se va con la animación de borrado
+  borrados = new Set<string>();
+  // Tarjetas fantasma mientras llega la plantilla de Firestore
+  readonly esqueletos = [0, 1, 2, 3, 4, 5];
+
   // Jugador al que corresponde la papelera pulsada.
   jugadorABorrar: Jugador | null = null;
 
@@ -59,6 +74,14 @@ export class PlayersComponent implements OnChanges {
   // Servicios compartidos: acceso a Firestore y avisos de éxito o error.
   private readonly jugadoresService = inject(JugadoresService);
   private readonly avisos = inject(AvisosService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  constructor() {
+    // Cambios hechos en otro dispositivo (u otra pestaña): se resaltan y se avisa
+    this.jugadoresService.cambios$
+      .pipe(takeUntilDestroyed())
+      .subscribe((cambio) => this.alCambiarFuera(cambio));
+  }
 
   // Tiempo real: si otra persona borra al jugador mientras aquí se pide la confirmación,
   // la ventana se cierra sola porque ya no queda nada que borrar.
@@ -69,6 +92,7 @@ export class PlayersComponent implements OnChanges {
     this.confirmacion.nativeElement.close();
     this.avisos.error(
       `${pendiente.nombre} ${pendiente.apellidos} ya no está en la plantilla: lo acaban de borrar desde otro dispositivo.`,
+      { clave: 'remoto-' + pendiente.id },
     );
   }
 
@@ -104,18 +128,73 @@ export class PlayersComponent implements OnChanges {
     if (!jugador) return;
 
     const nombre = `${jugador.nombre} ${jugador.apellidos}`;
+    this.borrados.add(jugador.id);
     this.confirmacion.nativeElement.close();
     this.enfocarVecino(jugador);
     try {
       // Solo se borra en Firestore: la escucha existente actualizará el listado.
       await this.jugadoresService.borrar(jugador.id);
-      this.avisos.exito(`${nombre} se ha borrado de la plantilla.`);
+      this.avisos.exito(`${nombre} se ha borrado de la plantilla.`, {
+        clave: 'borrado-' + jugador.id,
+        duracion: 8000,
+        accion: {
+          texto: 'Deshacer',
+          icono: 'bi-arrow-counterclockwise',
+          ejecutar: () => this.deshacerBorrado(jugador),
+        },
+      });
     } catch {
       // Si el servidor lo rechaza, Firestore devuelve el jugador a la lista
       this.avisos.error(
         `No se ha podido borrar a ${nombre}. Comprueba la conexión e inténtalo de nuevo.`,
       );
     }
+  }
+
+  // Deshacer: el jugador vuelve con todos sus datos (al final de la lista) y su tarjeta se ilumina.
+  // Como el borrado, no espera al servidor para devolverlo a la lista.
+  private deshacerBorrado(jugador: Jugador): void {
+    const nombre = `${jugador.nombre} ${jugador.apellidos}`;
+    this.destacar(jugador.id, 'alta');
+    this.jugadoresService.restaurar(jugador).then(
+      () =>
+        this.avisos.exito(`${nombre} ha vuelto a la plantilla.`, {
+          clave: 'borrado-' + jugador.id,
+        }),
+      () =>
+        this.avisos.error(`No se ha podido devolver a ${nombre} a la plantilla.`, {
+          clave: 'borrado-' + jugador.id,
+        }),
+    );
+    setTimeout(() =>
+      globalThis.document
+        ?.getElementById(`jugador-${jugador.id}`)
+        ?.scrollIntoView({ block: 'nearest' }),
+    );
+  }
+
+  // Altas, ediciones y borrados que llegan de fuera: aviso informativo y tarjeta iluminada
+  private alCambiarFuera({ tipo, jugador, remoto }: CambioJugador): void {
+    if (tipo === 'borrado') this.borrados.add(jugador.id);
+    else this.borrados.delete(jugador.id);
+    if (!remoto) return;
+    const nombre = `${jugador.nombre} ${jugador.apellidos}`;
+    const textos = {
+      alta: `Otro dispositivo ha añadido a ${nombre}.`,
+      edicion: `Otro dispositivo ha cambiado los datos de ${nombre}.`,
+      borrado: `Otro dispositivo ha borrado a ${nombre}.`,
+    };
+    if (tipo !== 'borrado') this.destacar(jugador.id, tipo);
+    this.avisos.info(textos[tipo], { clave: 'remoto-' + jugador.id });
+  }
+
+  private destacar(id: string, tipo: 'alta' | 'edicion'): void {
+    this.destacados.set(id, tipo);
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.destacados.delete(id);
+      this.cdr.markForCheck();
+    }, 2600);
   }
 
   // La tarjeta borrada desaparece: el foco pasa al jugador de al lado (o al buscador si no queda

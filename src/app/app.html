@@ -12,6 +12,7 @@
   [nombreEquipo]="nombreEquipo"
   [totalJugadores]="totalJugadores"
   [cargando]="cargando"
+  [conexion]="conexion"
 ></app-header>
 
 <main class="escena container-fluid">
@@ -34,16 +35,37 @@
         [attr.data-estado]="fichaAbierta ? 'activo' : 'vacio'"
         aria-label="Ficha del jugador"
       >
-        <app-detail
-          *ngIf="jugadorActual; else sinSeleccion"
-          [jugador]="jugadorActual"
-          [plantilla]="jugadores"
-          (cerrar)="onCerrarDetalle()"
-        >
-          <app-media [jugador]="jugadorActual"></app-media>
-        </app-detail>
+        <!-- La ficha y el reproductor se cargan aparte, cuando el navegador queda libre tras el arranque
+             (@defer): el primer pintado no espera a su código. Mientras tanto se ve el escenario en reposo. -->
+        @defer (on idle) {
+          @if (jugadorActual) {
+            <app-detail
+              [jugador]="jugadorActual"
+              [plantilla]="jugadores"
+              (cerrar)="onCerrarDetalle()"
+            >
+              <app-media [jugador]="jugadorActual"></app-media>
+            </app-detail>
+          } @else {
+            <ng-container *ngTemplateOutlet="reposo"></ng-container>
+          }
+        } @placeholder {
+          <ng-container *ngTemplateOutlet="reposo"></ng-container>
+        } @error {
+          <!-- No se ha podido descargar el código de la ficha (por ejemplo, la red se ha caído justo entonces) -->
+          <div class="reposo">
+            <i class="bi bi-cloud-slash reposo__error" aria-hidden="true"></i>
+            <h2 class="reposo__titulo">No se ha podido cargar la ficha</h2>
+            <p class="reposo__texto">
+              Comprueba la conexión y recarga la página para volver a intentarlo.
+            </p>
+            <button type="button" class="boton-primario" (click)="recargar()">
+              <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Recargar
+            </button>
+          </div>
+        }
 
-        <ng-template #sinSeleccion>
+        <ng-template #reposo>
           <div class="holo-suelo" aria-hidden="true"></div>
           <div class="reposo">
             <div class="esfera" aria-hidden="true">
@@ -66,6 +88,8 @@
                     : 'PROYECTOR EN ESPERA · ' + totalJugadores + ' PERFILES CARGADOS'
               }}
             </p>
+            <!-- Cifras de la plantilla, calculadas en directo con los datos de Firestore -->
+            <app-panel-equipo [jugadores]="jugadores"></app-panel-equipo>
           </div>
         </ng-template>
       </section>
