@@ -36,6 +36,7 @@
   Compilación de producción de la rama `main`, instalable y con funcionamiento sin conexión.
 - **Proyecto funcionando (StackBlitz):** https://stackblitz.com/github/EricKColl/FP.451-Producto2/tree/main
   Compila el proyecto en el navegador a partir de la rama `main`. No necesita cuenta; la primera carga tarda 1-2 minutos.
+  Si se queda en «Cloning repo from GitHub», usa el enlace alternativo, que abre el mismo proyecto con el importador nuevo de StackBlitz: https://stackblitz.com/~/github.com/EricKColl/FP.451-Producto2/tree/main
 - **Planificación (Trello):** https://trello.com/b/NjFDvrUe/fp451-p-des-front-end-con-frameworks-avanz-en-ent-m%C3%B3v
 - **Diseño (Figma, solo lectura):** https://www.figma.com/design/R25EESVjPwe5I7SFRQWKsh/EQUIPO-BASKET-%E2%80%93-Mockup-definitivo
 
