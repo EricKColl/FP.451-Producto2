@@ -20,8 +20,20 @@
 - **Subir la foto y el vídeo** desde el ordenador, con vista previa y barra de progreso, al dar de alta o al editar.
 - **Avisos** de éxito y de error en todas las acciones. Sin conexión, los cambios se ven al momento y se guardan cuando vuelve la red.
 
+### Mejoras
+
+- **Tiempo real visible:** indicador de conexión en la cabecera (en directo, sincronizando, sin conexión) y la tarjeta que cambia en otro dispositivo se ilumina con un aviso.
+- **Deshacer un borrado** desde el propio aviso, durante 8 segundos.
+- **Panel del equipo** con las cifras de la plantilla en directo: medias de puntos, rebotes, asistencias, altura y edad, líderes y reparto por posición.
+- **Visor de fotos** a pantalla completa y **miniaturas** optimizadas por Cloudinary.
+- **Arrastrar y soltar** la foto o el vídeo en el formulario.
+- **Aplicación instalable** (PWA): se instala en el ordenador o el móvil y abre la plantilla **sin conexión**.
+- **Arranque rápido:** carga diferida de la ficha, transición de la tarjeta a la ficha y esqueletos mientras llegan los datos.
+
 ## Enlaces
 
+- **Aplicación publicada (Firebase Hosting):** https://equipo-basket-producto2-ee9e1.web.app
+  Compilación de producción de la rama `main`, instalable y con funcionamiento sin conexión.
 - **Proyecto funcionando (StackBlitz):** https://stackblitz.com/github/EricKColl/FP.451-Producto2/tree/main
   Compila el proyecto en el navegador a partir de la rama `main`. No necesita cuenta; la primera carga tarda 1-2 minutos.
 - **Planificación (Trello):** https://trello.com/b/NjFDvrUe/fp451-p-des-front-end-con-frameworks-avanz-en-ent-m%C3%B3v
@@ -87,6 +99,17 @@ Se abre en http://localhost:4200 y se conecta directamente a la base de datos de
 
 > No uses la extensión **Live Server** de VS Code: la página saldría en blanco porque Angular necesita compilarse. Arráncalo siempre con `ng serve` (o `npm start`).
 
+La aplicación instalable y el modo sin conexión solo se activan en la compilación de producción (en `ng serve` el Service Worker está desactivado).
+
+### Publicar en Firebase Hosting
+
+La configuración está en [`firebase.json`](firebase.json) (carpeta publicada, reglas de caché y cabeceras de seguridad) y el proyecto, en [`.firebaserc`](.firebaserc). Hace falta la herramienta de Firebase (`npm install -g firebase-tools`) y haber iniciado sesión con `firebase login`.
+
+```bash
+ng build
+firebase deploy --only hosting
+```
+
 ## Pruebas
 
 Pruebas unitarias del formulario y del alta (lógica, sin navegador ni servicios reales):
@@ -100,9 +123,12 @@ Las pruebas en navegador (tiempo real con varios navegadores, alta, edición, bo
 ## Tecnologías
 
 - Angular 22 (componentes standalone, `*ngFor`, `*ngIf`, `@Input`, `@Output`, proyección con `<ng-content>`, pipe propio, RxJS y formularios reactivos)
-- Firebase 13: Cloud Firestore con escucha en tiempo real (`onSnapshot`)
-- Cloudinary: fotos y vídeos subidos desde el ordenador
-- Ventanas `<dialog>` nativas y avisos con la API Popover
+- Firebase 13: Cloud Firestore con escucha en tiempo real (`onSnapshot`) y caché persistente para trabajar sin conexión
+- Firebase Hosting: publicación de la compilación de producción
+- Angular Material 22.2 con un tema propio: tooltips, efecto de pulsación y barra de progreso
+- Angular Service Worker y manifiesto web: aplicación instalable y sin conexión
+- Cloudinary: fotos y vídeos subidos desde el ordenador, con miniaturas optimizadas
+- Ventanas `<dialog>` nativas, avisos con la API Popover y View Transitions API
 - Bootstrap 5.3.8 en modo oscuro + Bootstrap Icons
 - Tipografías Chakra Petch, Inter y JetBrains Mono (Google Fonts)
 
