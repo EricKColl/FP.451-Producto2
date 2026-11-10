@@ -93,3 +93,44 @@
     width: 100%;
   }
 }
+
+/* ---------- Arrastrar y soltar ---------- */
+.subida__vista {
+  position: relative;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.subida__vacia {
+  grid-auto-flow: row;
+  align-content: center;
+  gap: 2px;
+}
+.subida__vacia small {
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.52rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.subida--arrastrando .subida__vista {
+  border: 1px dashed var(--eb-cian);
+  box-shadow: 0 0 22px -4px var(--eb-cian);
+}
+.subida__soltar {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 2px;
+  background: rgb(5 10 20 / 0.82);
+  color: var(--eb-cian);
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.56rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.subida__soltar i {
+  font-size: 1.4rem;
+}

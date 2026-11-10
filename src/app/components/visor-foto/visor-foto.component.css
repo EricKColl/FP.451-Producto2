@@ -1,0 +1,115 @@
+/* Visor a pantalla completa: fondo oscuro desenfocado y la foto en un marco holográfico */
+.visor {
+  width: min(92vw, 980px);
+  max-width: none;
+  max-height: 92vh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--eb-texto);
+  overflow: visible;
+}
+.visor::backdrop {
+  background: rgb(3 6 12 / 0.82);
+  backdrop-filter: blur(10px) saturate(130%);
+}
+.visor[open] .visor__marco {
+  animation: visor-entra 0.42s var(--eb-suave);
+}
+@keyframes visor-entra {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+    filter: blur(4px);
+  }
+}
+
+.visor__marco {
+  position: relative;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--eb-linea-fuerte);
+  border-radius: var(--eb-radio);
+  background: rgb(8 15 28 / 0.9);
+  box-shadow:
+    0 0 0 1px oklch(0.86 0.14 205 / 0.18),
+    0 0 80px -20px oklch(0.86 0.14 205 / 0.5),
+    0 40px 80px -30px rgb(0 0 0 / 0.9);
+}
+
+.visor__foto {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--eb-radio) - 4px);
+  background: #000;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+.visor__foto:focus-visible {
+  outline: 2px solid var(--eb-cian);
+  outline-offset: 3px;
+}
+.visor__foto img {
+  display: block;
+  width: 100%;
+  max-height: calc(92vh - 110px);
+  object-fit: contain;
+  transform-origin: var(--origen, 50% 50%);
+  transition: transform 0.35s var(--eb-suave);
+}
+.visor__foto--ampliada {
+  cursor: zoom-out;
+}
+.visor__foto--ampliada img {
+  transform: scale(2.2);
+}
+
+.visor__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  padding: 12px 52px 2px 4px;
+}
+.visor__nombre {
+  font-family: var(--eb-fuente-titulos);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.visor__credito,
+.visor__ayuda {
+  color: var(--eb-texto-3);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.visor__ayuda {
+  margin-left: auto;
+  color: var(--eb-cian);
+}
+
+.visor__cerrar {
+  position: absolute;
+  right: 12px;
+  bottom: 6px;
+}
+
+@media (max-width: 575.98px) {
+  .visor {
+    width: calc(100vw - 24px);
+  }
+  .visor__ayuda {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visor[open] .visor__marco,
+  .visor__foto img {
+    animation: none;
+    transition: none;
+  }
+}

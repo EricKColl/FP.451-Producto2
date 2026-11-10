@@ -1,0 +1,47 @@
+@if (cifras.length) {
+  <section class="panel" aria-labelledby="titulo-panel">
+    <h3 id="titulo-panel" class="panel__titulo mono">
+      <i class="bi bi-bar-chart-line" aria-hidden="true"></i> La plantilla en cifras
+      <span class="panel__directo">· medias en directo</span>
+    </h3>
+
+    <!-- Medias del equipo -->
+    <dl class="cifras">
+      @for (c of cifras; track c.etiqueta) {
+        <div class="cifra">
+          <dt>{{ c.etiqueta }}</dt>
+          <dd>
+            {{ c.valor | number: c.formato }}<small>{{ c.unidad }}</small>
+          </dd>
+        </div>
+      }
+    </dl>
+
+    <div class="panel__fila">
+      <!-- Líderes de la plantilla -->
+      <ul class="lideres list-unstyled">
+        @for (l of lideres; track l.etiqueta) {
+          <li class="lider">
+            <span class="lider__etq">{{ l.etiqueta }}</span>
+            <span class="lider__nombre">{{ l.nombre }}</span>
+            <span class="lider__valor mono">{{ l.valor | number: '1.1-1' }} {{ l.unidad }}</span>
+          </li>
+        }
+      </ul>
+
+      <!-- Reparto por posiciones: una barra por posición -->
+      <figure class="reparto">
+        <figcaption class="reparto__titulo">Jugadores por posición</figcaption>
+        @for (r of reparto; track r.posicion) {
+          <div class="reparto__fila">
+            <span class="reparto__pos">{{ r.posicion }}</span>
+            <span class="reparto__pista" aria-hidden="true">
+              <span class="reparto__barra" [style.--f]="r.fraccion"></span>
+            </span>
+            <span class="reparto__n mono">{{ r.total }}</span>
+          </div>
+        }
+      </figure>
+    </div>
+  </section>
+}

@@ -25,7 +25,9 @@ export interface Jugador {
   video: string; // ruta de assets o URL del archivo subido
   descripcion: string;
   estadisticas: Estadisticas;
+  // Última modificación en Firestore (la pone el servidor; no se edita en el formulario)
+  actualizadoEn?: Date;
 }
 
 // Datos que se guardan al crear o editar un jugador: todo menos el id, que lo asigna Firestore
-export type DatosJugador = Omit<Jugador, 'id'>;
+export type DatosJugador = Omit<Jugador, 'id' | 'actualizadoEn'>;

@@ -1,0 +1,162 @@
+/* Panel de cifras de la plantilla, en vidrio y con los colores de la ficha */
+.panel {
+  width: min(640px, 100%);
+  margin-top: 6px;
+  padding: 16px 18px 14px;
+  border: 1px solid var(--eb-linea);
+  border-radius: var(--eb-radio);
+  background: rgb(8 15 28 / 0.55);
+  backdrop-filter: blur(8px);
+  text-align: left;
+  animation: panel-entra 0.6s var(--eb-suave) 0.2s both;
+}
+@keyframes panel-entra {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+.panel__titulo {
+  margin: 0 0 12px;
+  color: var(--eb-cian);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.panel__directo {
+  color: var(--eb-texto-3);
+}
+
+.cifras {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 0 0 14px;
+}
+.cifra {
+  padding: 8px 10px;
+  border: 1px solid var(--eb-linea);
+  border-radius: var(--eb-radio-s);
+  background: rgb(255 255 255 / 0.02);
+}
+.cifra dt {
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--eb-texto-3);
+}
+.cifra dd {
+  margin: 2px 0 0;
+  font-family: var(--eb-fuente-titulos);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--eb-texto);
+}
+.cifra:first-child dd {
+  color: var(--eb-naranja);
+}
+.cifra small {
+  margin-left: 3px;
+  font-size: 0.66rem;
+  font-weight: 500;
+  color: var(--eb-texto-3);
+}
+
+.panel__fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.lideres {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.lider {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 8px;
+  padding: 6px 10px;
+  border-left: 2px solid var(--eb-naranja);
+  background: linear-gradient(90deg, var(--eb-naranja-tenue), transparent 80%);
+  border-radius: 0 6px 6px 0;
+}
+.lider__etq {
+  grid-column: 1 / 3;
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--eb-texto-3);
+}
+.lider__nombre {
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lider__valor {
+  font-size: 0.74rem;
+  color: var(--eb-naranja);
+}
+
+.reparto {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.reparto__titulo {
+  font-family: var(--eb-fuente-datos);
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--eb-texto-3);
+}
+.reparto__fila {
+  display: grid;
+  grid-template-columns: 74px 1fr 18px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+.reparto__pos {
+  color: var(--eb-texto-2);
+}
+.reparto__pista {
+  height: 6px;
+  border-radius: 3px;
+  background: rgb(120 205 255 / 0.08);
+  overflow: hidden;
+}
+.reparto__barra {
+  display: block;
+  height: 100%;
+  width: calc(var(--f) * 100%);
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--eb-azul), var(--eb-cian));
+  box-shadow: 0 0 10px -2px var(--eb-cian);
+  transition: width 0.8s var(--eb-suave);
+  animation: barra-crece 1s var(--eb-suave) 0.4s both;
+}
+@keyframes barra-crece {
+  from {
+    width: 0;
+  }
+}
+.reparto__n {
+  text-align: right;
+  color: var(--eb-cian);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .reparto__barra {
+    animation: none;
+    transition: none;
+  }
+}

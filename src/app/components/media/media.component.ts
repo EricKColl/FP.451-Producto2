@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Jugador } from '../../models/jugador.model';
 
 // Safari en iPhone puede ofrecer pantalla completa nativa solo para el vídeo.
@@ -21,7 +22,7 @@ type VideoConPantallaCompleta = HTMLVideoElement & {
 
 @Component({
   selector: 'app-media',
-  imports: [UpperCasePipe],
+  imports: [UpperCasePipe, MatTooltipModule],
   templateUrl: './media.component.html',
   styleUrl: './media.component.css',
   changeDetection: ChangeDetectionStrategy.Eager,

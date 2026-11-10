@@ -1,6 +1,11 @@
 import { InjectionToken, Provider } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { Firestore, getFirestore } from 'firebase/firestore';
+import {
+  Firestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
 import { environment } from '../environments/environment';
 
 // Conexión con Cloud Firestore mediante el SDK oficial de Firebase.
@@ -11,6 +16,12 @@ export const FIRESTORE = new InjectionToken<Firestore>('Cloud Firestore');
 export function provideFirebase(): Provider {
   return {
     provide: FIRESTORE,
-    useFactory: () => getFirestore(initializeApp(environment.firebase)),
+    // Caché persistente en el navegador (IndexedDB), compartida entre pestañas: la plantilla se ve
+    // aunque se recargue la página sin conexión, y los cambios hechos sin red se envían al volver.
+    // Si el navegador no la admite, Firestore usa la caché en memoria de siempre.
+    useFactory: () =>
+      initializeFirestore(initializeApp(environment.firebase), {
+        localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+      }),
   };
 }

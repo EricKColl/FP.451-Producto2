@@ -108,4 +108,41 @@
       </p>
     </div>
   </div>
+
+  <div class="cabecera__acciones">
+    <!-- Instalar como aplicación (Chrome, Edge y Android lo ofrecen; en iPhone, «Añadir a inicio») -->
+    @if (pwa.instalable()) {
+      <button
+        type="button"
+        class="instalar"
+        matTooltip="Instalar Equipo Basket como aplicación"
+        matTooltipPosition="below"
+        (click)="pwa.instalar()"
+      >
+        <i class="bi bi-download" aria-hidden="true"></i
+        ><span class="instalar__texto">Instalar</span>
+      </button>
+    }
+    <!-- Estado de la conexión con Cloud Firestore. role="status": el lector de pantalla anuncia los cambios -->
+    <p
+      class="estado"
+      [class]="'estado estado--' + conexion"
+      role="status"
+      tabindex="0"
+      [matTooltip]="estado.ayuda"
+      matTooltipPosition="below"
+    >
+      <span class="estado__luz" aria-hidden="true"></span>
+      <span class="estado__texto">{{ estado.texto }}</span>
+    </p>
+  </div>
+
+  <!-- Línea de progreso bajo la cabecera mientras se conecta o se guardan cambios -->
+  @if (conexion === 'conectando' || conexion === 'sincronizando') {
+    <mat-progress-bar
+      class="cabecera__progreso"
+      mode="indeterminate"
+      aria-hidden="true"
+    ></mat-progress-bar>
+  }
 </header>
