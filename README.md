@@ -34,9 +34,9 @@
 
 - **Aplicación publicada (Firebase Hosting):** https://equipo-basket-producto2-ee9e1.web.app
   Compilación de producción de la rama `main`, instalable y con funcionamiento sin conexión.
-- **Proyecto funcionando (StackBlitz):** https://stackblitz.com/github/EricKColl/FP.451-Producto2/tree/main
+- **Proyecto funcionando (StackBlitz):** https://stackblitz.com/~/github.com/EricKColl/FP.451-Producto2/tree/main
   Compila el proyecto en el navegador a partir de la rama `main`. No necesita cuenta; la primera carga tarda 1-2 minutos.
-  Si se queda en «Cloning repo from GitHub», usa el enlace alternativo, que abre el mismo proyecto con el importador nuevo de StackBlitz: https://stackblitz.com/~/github.com/EricKColl/FP.451-Producto2/tree/main
+  El enlace clásico (https://stackblitz.com/github/EricKColl/FP.451-Producto2/tree/main) abre el mismo proyecto, pero desde el 10/11/2026 su importador se queda en «Cloning repo from GitHub».
 - **Planificación (Trello):** https://trello.com/b/NjFDvrUe/fp451-p-des-front-end-con-frameworks-avanz-en-ent-m%C3%B3v
 - **Diseño (Figma, solo lectura):** https://www.figma.com/design/R25EESVjPwe5I7SFRQWKsh/EQUIPO-BASKET-%E2%80%93-Mockup-definitivo
 
